@@ -1,0 +1,9 @@
+1. List
+2. Vector
+3. Stack
+4. Queue
+5. Map
+
+List max_size:
+	int 	size = sizeof( typename T::value_type ) <= 8 ? 24 : 40;
+	return typename T::size_type( -1 ) / size;
