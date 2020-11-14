@@ -30,131 +30,217 @@ namespace ft {
 	class list {
 
 		template < typename Tp >
-		struct _iterator {
+		class _iterator {
 
 		public:
 
-			explicit _iterator( listNode<Tp>* p = 0 ) : _pos( p ) {}
+			_iterator() : _node( 0 ) {}
+			_iterator( listNode<Tp>* p = 0 ) : _node( p ) {}
+			_iterator( const _iterator& src ) { *this = src; }
+			_iterator&	operator=( const _iterator& rhs ) {
 
-			Tp &		operator*() { return this->_pos->data; }
-			Tp *		operator->() { return &( this->_pos->_data ); }
-			bool		operator!=( const _iterator& rhs ) { return this->_pos != rhs._pos; }
-			bool 		operator==( const _iterator& rhs ) { return this->_pos == rhs._pos; }
+				if ( this != &rhs )
+					this->_node = rhs._node;
+				return *this;
+			}
+			virtual ~_iterator() {}
+
+			Tp &		operator*() { return this->_node->data; }
+			Tp *		operator->() { return &( this->_node->_data ); }
+			bool		operator!=( const _iterator& rhs ) { return this->_node != rhs._node; }
+			bool 		operator==( const _iterator& rhs ) { return this->_node == rhs._node; }
 			_iterator	operator++( int ) {
 
 				_iterator	tmp = *this;
-				this->_pos = this->_pos->next;
+				this->_node = this->_node->next;
 				return tmp;
 			}
 			_iterator	operator++() {
 
-				this->_pos = this->_pos->next;
+				this->_node = this->_node->next;
 				return *this;
 			}
 			_iterator	operator--( int ) {
 
 				_iterator	tmp = *this;
-				this->_pos = this->_pos->prev;
+				this->_node = this->_node->prev;
 				return	tmp;
 			}
 			_iterator	operator--() {
 
-				this->_pos = this->_pos->prev;
+				this->_node = this->_node->prev;
 				return *this;
 			}
+			listNode<Tp>*	getNode() const { return this->_node; }
 
 		private:
 
-			listNode<Tp>*	_pos;
+			listNode<Tp>*	_node;
 		};
 
 		template < typename Tp >
-		struct _const_iterator {
+		class _const_iterator {
 
-			explicit _const_iterator( const listNode<Tp>* p ) : _pos( p ) {}
-			_const_iterator( const _iterator<Tp>& x ) : _pos( x.pos ) {}
+		public:
 
-			const Tp&		operator*() const { return this->_pos->data; }
-			const Tp*		operator->() const { return &( this->_pos->data ); }
-			bool			operator!=( const _const_iterator& rhs ) { return this->_pos != rhs._pos; }
-			bool 			operator==( const _const_iterator& rhs ) { return this->_pos == rhs._pos; }
+			_const_iterator() : _node( 0 ) {}
+			_const_iterator( const listNode<Tp>* p ) : _node( p ) {}
+			_const_iterator( const _iterator<Tp>& x ) : _node( x.getNode() ) {}
+			_const_iterator( const _const_iterator& src ) { *this = src; }
+			_const_iterator&	operator=( const _const_iterator& rhs ) {
+
+				if ( this != &rhs )
+					this->_node = rhs._node;
+				return *this;
+			}
+			virtual ~_const_iterator() {}
+
+			const Tp&		operator*() const { return this->_node->data; }
+			const Tp*		operator->() const { return &( this->_node->data ); }
+			bool			operator!=( const _const_iterator& rhs ) { return this->_node != rhs._node; }
+			bool 			operator==( const _const_iterator& rhs ) { return this->_node == rhs._node; }
 			_const_iterator	operator++( int ) {
 
 				_const_iterator	tmp = *this;
-				this->_pos = this->_pos->next;
+				this->_node = this->_node->next;
 				return tmp;
 			}
 			_const_iterator	operator++() {
 
-				this->_pos = this->_pos->next;
+				this->_node = this->_node->next;
 				return *this;
 			}
 			_const_iterator	operator--( int ) {
 
 				_const_iterator	tmp = *this;
-				this->_pos = this->_pos->prev;
+				this->_node = this->_node->prev;
 				return tmp;
 			}
 			_const_iterator	operator--() {
 
-				this->_pos = this->_pos->prev;
+				this->_node = this->_node->prev;
 				return *this;
 			}
 
 		private:
 
-			const listNode<Tp>*	_pos;
+			const listNode<Tp>*	_node;
 		};
 
-		template < typename _Iterator>
-		class _reverse_iterator {};
 
-		listNode<T>*	_head;
-		listNode<T>*	_tail;
+		template < typename Iterator >
+		class _reverse_iterator {
+
+		private:
+
+			template < class Iterator2 >
+			class _iterator_traits {
+
+			public:
+
+				typedef	typename	Iterator2::difference_type		difference_type;
+				typedef typename	Iterator2::value_type			value_type;
+				typedef typename	Iterator2::pointer				pointer;
+				typedef typename	Iterator2::reference			reference;
+				typedef typename	Iterator2::iterator_category	iterator_category;
+			};
+
+			struct _random_access_iterator_tag {};
+
+			template < class U >
+			class _iterator_traits<U*> {
+
+			public:
+
+				typedef				ptrdiff_t					difference_type;
+				typedef				U							value_type;
+				typedef				U*							pointer;
+				typedef				U&							reference;
+				typedef				_random_access_iterator_tag	iterator_category;
+			};
+
+			template < class U >
+			class _iterator_traits< const U* > {
+
+			public:
+
+				typedef				ptrdiff_t					difference_type;
+				typedef				U							value_type;
+				typedef				const U*					pointer;
+				typedef				const U&					reference;
+				typedef				_random_access_iterator_tag	iterator_category;
+			};
+
+		protected:
+
+			Iterator			_current;
+
+		public:
+
+			typedef				Iterator										iterator_type;
+			typedef typename	_iterator_traits<Iterator>::iterator_category	iterator_category;
+			typedef typename	_iterator_traits<Iterator>::value_type			value_type;
+			typedef typename	_iterator_traits<Iterator>::difference_type		difference_type;
+			typedef typename	_iterator_traits<Iterator>::pointer				pointer;
+			typedef typename	_iterator_traits<Iterator>::reference			reference;
+
+			_reverse_iterator() {}
+			explicit _reverse_iterator( iterator_type it ) : _current( it ) {}
+			_reverse_iterator( const _reverse_iterator& src ) : _current( src.current ) {}
+			template < class Iter >
+			_reverse_iterator( const _reverse_iterator< Iter >& rev_it ) : _current( rev_it.base() ) {}
+
+			iterator_type		base() const { return _current; }
+
+			reference			operator*() const {
+				_reverse_iterator	tmp = this->_current;
+				return tmp;
+			}
+			_reverse_iterator	operator+( difference_type n ) const { return reverse_iterator( this->_current - n ); }
+			_reverse_iterator&	operator++() {
+				this->_current--;
+				return *this;
+			}
+			_reverse_iterator	operator++( int ) {
+
+				_reverse_iterator	tmp = *this;
+				this->_current--;
+				return tmp;
+			}
+			_reverse_iterator&	operator+=( difference_type n ) {
+
+				this->_current -= n;
+				return *this;
+			}
+			_reverse_iterator	operator-( difference_type n ) const { return reverse_iterator( this->_current + n ); }
+			_reverse_iterator&	operator--() {
+
+				this->_current++;
+				return *this;
+			}
+			_reverse_iterator	operator--( int ) {
+
+				_reverse_iterator	tmp = *this;
+				this->_current++;
+				return *this;
+			}
+			_reverse_iterator&	operator-=( difference_type n ) {
+
+				this->_current += n;
+				return *this;
+			}
+			pointer				operator->() const {
+				_reverse_iterator	tmp = this->_current;
+				return &tmp;
+			}
+			reference			operator[]( difference_type n ) const { return this + n; }
+
+		};
+
+		listNode<T>*	_front;
+		listNode<T>*	_back;
 
 		int 			_size;
-
-		void	insertInternal( const T& e, listNode<T>* pos ) {
-
-			listNode<T>	*n = new listNode<T>( e );
-
-			this->_size++;
-
-			n->next = pos;
-
-			if ( pos ) {
-				n->prev = pos->prev;
-				pos->prev = n;
-			}
-			else {
-				n->prev = this->_tail;
-				this->_tail = n;
-			}
-
-			if ( n->prev )
-				n->prev->next = n;
-			else
-				this->_head = n;
-		}
-
-		void 			removeInternal( listNode<T>* pos ) {
-
-			if ( pos ) {
-
-				if ( pos->prev )
-					pos->prev->next = pos->next;
-				if ( pos->next )
-					pos->next->prev = pos->prev;
-				if ( pos == this->_head )
-					this->_head = pos->next;
-				if ( pos == this->_tail )
-					this->_tail = pos->prev;
-
-				delete pos;
-
-				this->_size--;
-			}
-		}
 
 	public:
 
@@ -174,7 +260,7 @@ namespace ft {
 
 
 		// Constructors
-		explicit	list( const allocator_type& alloc = allocator_type() ) : _head( 0 ), _tail( 0 ), _size( 0 ) {
+		explicit	list( const allocator_type& alloc = allocator_type() ) : _front( 0 ), _back( 0 ), _size( 0 ) {
 
 			allocator_type() = alloc;
 		}
@@ -188,9 +274,9 @@ namespace ft {
 
 
 		// Destructor
-		~list() {
+		virtual ~list() {
 
-			listNode<T>	*current( this->_head );
+			listNode<T>	*current( this->_front );
 
 			while ( current ) {
 
@@ -207,17 +293,17 @@ namespace ft {
 
 
 		// Iterators
-		iterator				begin() { return iterator( this->_head ); }
-		const_iterator			begin() const { return iterator( this->_head ); }
+		iterator				begin() { return iterator( this->_front ); }
+		const_iterator			begin() const { return iterator( this->_front ); }
 
 		iterator 				end() { return iterator( 0 ); }
 		const_iterator			end() const { return iterator( 0 ); }
 
-		reverse_iterator		rbegin();
-		const_reverse_iterator	rbegin() const;
+		reverse_iterator		rbegin() { return reverse_iterator( this->_front ); }
+		const_reverse_iterator	rbegin() const { return reverse_iterator( this->_front ); }
 
-		reverse_iterator 		rend();
-		const_reverse_iterator	rend() const;
+		reverse_iterator 		rend() { return reverse_iterator( 0 ); }
+		const_reverse_iterator	rend() const { return reverse_iterator( 0 ); }
 
 
 		// Capacity
@@ -227,12 +313,11 @@ namespace ft {
 
 
 		// Element access
-		reference 				front() { return this->_head->data; }
-		const_reference 		front() const { return this->_head->data; }
+		reference 				front() { return this->_front->data; }
+		const_reference 		front() const { return this->_front->data; }
 
-		reference 				back() { return this->_tail->data; }
-		const_reference 		back() const { return this->_tail->data; }
-
+		reference 				back() { return this->_back->data; }
+		const_reference 		back() const { return this->_back->data; }
 
 		// Modifiers
 		template < class InputIterator >
@@ -241,21 +326,74 @@ namespace ft {
 
 		void					push_front( const value_type& val ) {
 
-			insertInternal( val, this->_head );
+			listNode<T>*	n = new ( std::nothrow ) listNode<T>( val );
+
+			if ( !n )
+				throw std::bad_alloc();
+
+			n->next = this->_front;
+
+			n->prev = 0;
+
+			if ( this->_front )
+				this->_front->prev = n;
+			else
+				this->_back = n;
+
+			this->_front = n;
+
+			this->_size++;
 		}
+
 		void 					pop_front() {
 
-			removeInternal( this->_head );
+			if ( this->_front ) {
+
+				listNode<T>*	tmp = this->_front->next;
+				if ( this->_front->next )
+					this->_front->next->prev = 0;
+				else
+					this->_back = 0;
+				delete this->_front;
+				this->_front = tmp;
+				this->_size--;
+			}
 		}
 
 		void 					push_back( const value_type& val ) {
 
-			insertInternal( val, 0 );
+			listNode<T>*	n = new ( std::nothrow ) listNode<T>( val );
+
+			if ( !n )
+				throw std::bad_alloc();
+
+			n->next = 0;
+
+			n->prev = this->_back;
+
+			if ( this->_back )
+				this->_back->next = n;
+			else
+				this->_front = n;
+
+			this->_back = n;
+
+			this->_size++;
 		}
 
 		void 					pop_back() {
 
-			removeInternal( this->_tail );
+			if ( this->_back ) {
+
+				listNode<T>*	tmp = this->_back->prev;
+				if ( this->_back->prev )
+					this->_back->prev->next = 0;
+				else
+					this->_front = 0;
+				delete this->_back;
+				this->_back = tmp;
+				this->_size--;
+			}
 		}
 
 		iterator 				insert( iterator position, const value_type& val );
