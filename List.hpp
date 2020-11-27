@@ -29,8 +29,6 @@ namespace ft {
 
 	struct bidirectional_iterator_tag {};
 	struct random_access_iterator_tag {};
-	template< class >
-	struct check_type { typedef void type; };
 
 	template < class Iterator >
 	class ft_iterator_traits {
@@ -78,8 +76,6 @@ namespace ft {
 		typedef		U*							pointer;
 		typedef		U&							reference;
 		typedef		bidirectional_iterator_tag	iterator_category;
-
-		int			foo;
 
 
 		ft_list_iterator() : _node( 0 ) {}
@@ -140,8 +136,6 @@ namespace ft {
 	class ft_list_const_iterator {
 
 	public:
-
-		int 		foo;
 
 		typedef		U							value_type;
 		typedef		ptrdiff_t					difference_type;
@@ -351,8 +345,28 @@ namespace ft {
 		listNode<T>*	_back;
 		listNode<T>*	_pte;
 
-		int 			_size;
-		
+		size_t 			_size;
+
+
+		template < typename U >
+		struct	_check_type {};
+
+		template <>
+		struct	_check_type< ft_list_iterator< T > > {
+			typedef int check;
+		};
+
+		template <>
+		struct	_check_type< ft_list_const_iterator< T > > {
+			typedef int check;
+		};
+
+		template< typename U >
+		struct	_check_type< U* > {
+			typedef int check;
+		};
+
+
 
 	public:
 
@@ -462,16 +476,16 @@ namespace ft {
 		// Modifiers
 
 		template < class InputIterator >
-		void	 				assign( InputIterator first, InputIterator last, typename InputIterator::value_type = 0) {
+		void	 				assign( InputIterator first, InputIterator last, typename _check_type<InputIterator>::check = 0 ) {
 
 			this->clear();
+
 			for ( ; first != last; ++first )
 				this->push_back( *first );
 
 		}
 		void 					assign( size_type n, const value_type& val ) {
 
-			std::cout << "Normal assign" << std::endl;
 			this->clear();
 
 			for ( size_type i = 0; i < n; i++ )
@@ -565,17 +579,80 @@ namespace ft {
 			}
 		}
 
-		iterator 				insert( iterator position, const value_type& val );
-		void 					insert( iterator position, size_type n, const value_type& val );
+		iterator 				insert( iterator position, const value_type& val ) {
+
+			listNode<T>	*n = new listNode<T>( val );
+
+			n->next = position.getNode();
+			n->prev = position.getNode()->prev;
+
+			position.getNode()->prev->next = n;
+			position.getNode()->prev = n;
+
+			return --position;
+		}
+
+		void 					insert( iterator position, size_type n, const value_type& val ) {
+
+			for ( size_type i = 0; i < n; i++ ) {
+
+				position = insert( position, val );
+			}
+		}
+
 		template < class InputIterator >
-		void	 				insert( iterator position, InputIterator first, InputIterator last );
+		void	 				insert( iterator position, InputIterator first, InputIterator last, typename InputIterator::value_type = 0 ) {
 
-		iterator 				erase( iterator position );
-		iterator 				erase( iterator first, iterator last );
+			while ( first != last ) {
+				position = insert( position, *first );
+				first++;
+			}
+		}
 
-		void 					swap( list& x );
+		iterator 				erase( iterator position ) {
 
-		void 					resize( size_type n, value_type val = value_type() );
+			iterator tmp = position.getNode()->next;
+
+			position.getNode()->next->prev = position.getNode()->prev;
+			position.getNode()->prev->next = position.getNode()->next;
+			delete position.getNode();
+
+			return tmp;
+		}
+
+		iterator 				erase( iterator first, iterator last ) {
+
+			while ( first != last )
+				first = erase( first );
+
+			return last;
+		}
+
+		void 					swap( list& x ) {
+
+			listNode<T>	*b = this->_back;
+			listNode<T> *f = this->_front;
+			listNode<T> *p = this->_pte;
+			int 		s  = this->_size;
+
+			this->_back = x._back;
+			this->_front = x._front;
+			this->_pte = x._pte;
+			this->_size = x._size;
+
+			x._back = b;
+			x._front = f;
+			x._pte = p;
+			x._size = s;
+		}
+
+		void 					resize( size_type n, value_type val = value_type() ) {
+
+			while ( n < this->_size )
+				this->pop_back();
+			while( n > this->_size )
+				this->push_back( val );
+		}
 
 		void 					clear() {
 

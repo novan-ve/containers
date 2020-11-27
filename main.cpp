@@ -263,27 +263,7 @@ void	capacity() {
 
 void	modifiers() {
 
-	// assign
-	ft::list<int>	first;
-	ft::list<int>	second;
-
-	first.assign( 7, 100 );
-
-	second.assign( first.begin(), first.end() );
-
-	int	myints[] = { 1776, 7, 4 };
-	first.assign( myints, myints + 3 );
-
-	std::cout << "Size of first: " << int ( first.size() ) << std::endl;
-	std::cout << "Size of second: " << int( second.size() ) << std::endl << std::endl;
-
-	// insert
-
-	// erase
-
-	// swap
-
-	// resize
+	std::cout << "************************* Modifiers *************************" << std::endl;
 
 	// clear
 	ft::list<int>	myList;
@@ -299,6 +279,109 @@ void	modifiers() {
 	myList.push_back( 2202 );
 
 	printContainer( myList );
+
+	// assign
+	ft::list<int>	first;
+	ft::list<int>	second;
+
+	first.assign( 7, 100 );
+
+	second.assign( first.begin(), first.end() );
+
+	int 	myints[] = { 1776, 7, 4 };
+	first.assign( myints, myints + 3 );
+
+	std::cout << "Size of first: " << int ( first.size() ) << std::endl;
+	std::cout << "Size of second: " << int( second.size() ) << std::endl << std::endl;
+
+	// insert
+
+	myList.clear();
+
+	for ( int i = 1; i <= 5; ++i )
+		myList.push_back( i );
+
+	printContainer( myList );
+
+	ft::list<int>::iterator it = myList.begin();
+
+	++it;
+
+	myList.insert( it, 10 );
+	printContainer( myList );
+
+	myList.insert( it, 2, 20 );
+	printContainer( myList );
+
+	--it;
+
+	ft::list<int>	myList2;
+
+	myList2.push_back( 30 );
+	myList2.push_back( 30 );
+
+	myList.insert( it, myList2.begin(), myList2.end() );
+	printContainer( myList );
+	std::cout << std::endl;
+
+	// erase
+	myList.clear();
+
+	for ( int i = 1; i < 10; ++i )
+		myList.push_back( i * 10 );
+
+	ft::list<int>::iterator	it2 = myList.begin();
+	it = myList.begin();
+
+	for ( int i = 0; i < 6; ++i )
+		++it2;
+	++it;
+
+	it = myList.erase( it );
+	it2 = myList.erase( it2 );
+	printContainer( myList );
+
+	++it;
+	--it2;
+
+	std::cout << *myList.erase( it, it2 ) << std::endl;
+	printContainer( myList );
+	std::cout << std::endl;
+
+	// swap
+	first.clear();
+	second.clear();
+
+	for ( int i = 0; i < 3; ++i )
+		first.push_back( 100 );
+
+	for ( int i = 0; i < 5; ++i )
+		second.push_back( 200 );
+
+	first.swap( second );
+
+	std::cout << "first contains:";
+	for ( it = first.begin(); it != first.end(); it++ )
+		std::cout << ' ' << *it;
+	std::cout << std::endl;
+
+	std::cout << "second contains:";
+	for ( it = second.begin(); it != second.end(); it++ )
+		std::cout << ' ' << *it;
+	std::cout << std::endl;
+
+	// resize
+	myList.clear();
+
+	for ( int i = 1; i < 10; ++i )
+		myList.push_back( i );
+
+	myList.resize( 5 );
+	myList.resize( 8, 100 );
+	myList.resize( 12 );
+
+	printContainer( myList );
+
 }
 
 int 	main() {
