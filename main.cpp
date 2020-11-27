@@ -346,6 +346,9 @@ void	modifiers() {
 
 	std::cout << *myList.erase( it, it2 ) << std::endl;
 	printContainer( myList );
+
+	std::cout << myList.size() << std::endl;
+
 	std::cout << std::endl;
 
 	// swap
@@ -381,7 +384,37 @@ void	modifiers() {
 	myList.resize( 12 );
 
 	printContainer( myList );
+	std::cout << std::endl;
+}
 
+void	operations() {
+
+	std::cout << "************************ Operations *************************" << std::endl;
+
+	// splice
+	ft::list<int>	myList, myList2;
+
+	for ( int i = 1; i <= 4; ++i )
+		myList.push_back( i );
+
+	for ( int i = 1; i <= 3; ++i )
+		myList2.push_back( i * 10 );
+
+	ft::list<int>::iterator	it = myList.begin();
+	++it;
+
+	myList.splice( it, myList2 );
+	printContainer( myList );
+
+	myList2.splice( myList2.begin(), myList, it );
+	printContainer( myList );
+
+	it = myList.begin();
+	for ( int i = 0; i < 3; i++ )
+		it++;
+
+	myList.splice( myList.begin(), myList, it, myList.end() );
+	printContainer( myList );
 }
 
 int 	main() {
@@ -391,6 +424,7 @@ int 	main() {
 	push_pop_front_back();
 	capacity();
 	modifiers();
+	operations();
 
 	return 0;
 }

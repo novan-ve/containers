@@ -583,21 +583,40 @@ namespace ft {
 
 			listNode<T>	*n = new listNode<T>( val );
 
-			n->next = position.getNode();
-			n->prev = position.getNode()->prev;
+			this->_size++;
+			this->_pte->data++;
 
-			position.getNode()->prev->next = n;
-			position.getNode()->prev = n;
+			if ( position != 0 ) {
 
-			return --position;
+				n->next = position.getNode();
+				n->prev = position.getNode()->prev;
+				position.getNode()->prev->next = n;
+				position.getNode()->prev = n;
+
+				if ( n->prev == this->_pte )
+					this->_front = n;
+
+				return --position;
+			}
+			else {
+
+				n->next = this->_pte;
+				n->prev = this->_pte;
+
+				this->_front = n;
+				this->_back = n;
+
+				this->_pte->next = this->_front;
+				this->_pte->prev = this->_back;
+
+				return 0;
+			}
 		}
 
 		void 					insert( iterator position, size_type n, const value_type& val ) {
 
-			for ( size_type i = 0; i < n; i++ ) {
-
+			for ( size_type i = 0; i < n; i++ )
 				position = insert( position, val );
-			}
 		}
 
 		template < class InputIterator >
@@ -615,7 +634,14 @@ namespace ft {
 
 			position.getNode()->next->prev = position.getNode()->prev;
 			position.getNode()->prev->next = position.getNode()->next;
+
+			if ( position.getNode()->next == this->_pte )
+				this->_back = position.getNode()->prev;
+
 			delete position.getNode();
+
+			this->_size--;
+
 
 			return tmp;
 		}
@@ -679,9 +705,34 @@ namespace ft {
 
 
 		// Operations
-		void 					splice( iterator position, list& x );
-		void 					splice( iterator position, list& x, iterator i );
-		void 					splice( iterator position, list& x, iterator first, iterator last );
+		void 					splice( iterator position, list& x ) {
+
+			for ( iterator it = --x.end(); it != --x.begin(); --it )
+				position = this->insert( position, *it );
+
+			x.clear();
+		}
+		void 					splice( iterator position, list& x, iterator i ) {
+
+			this->insert( position, *i );
+			x.erase( i );
+		}
+		void 					splice( iterator position, list& x, iterator first, iterator last ) {
+
+			(void)x;
+			iterator 	tmp = first;
+
+			while ( first != last ) {
+				std::cout << *first << std::endl;
+				this->insert( position, *first );
+				first++;
+			}
+
+			while ( first != last ) {
+				this->erase( first );
+				first++;
+			}
+		}
 
 		void 					remove( const value_type& val );
 
