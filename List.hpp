@@ -13,6 +13,7 @@
 #pragma once
 
 #include <iostream>
+#include <cstddef>		// Linux ptrdiff_t dependency
 
 namespace ft {
 
@@ -28,6 +29,8 @@ namespace ft {
 
 	struct bidirectional_iterator_tag {};
 	struct random_access_iterator_tag {};
+	template< class >
+	struct check_type { typedef void type; };
 
 	template < class Iterator >
 	class ft_iterator_traits {
@@ -75,6 +78,9 @@ namespace ft {
 		typedef		U*							pointer;
 		typedef		U&							reference;
 		typedef		bidirectional_iterator_tag	iterator_category;
+
+		int			foo;
+
 
 		ft_list_iterator() : _node( 0 ) {}
 		ft_list_iterator( listNode<U>* p ) : _node( p ) {}
@@ -134,6 +140,8 @@ namespace ft {
 	class ft_list_const_iterator {
 
 	public:
+
+		int 		foo;
 
 		typedef		U							value_type;
 		typedef		ptrdiff_t					difference_type;
@@ -344,6 +352,7 @@ namespace ft {
 		listNode<T>*	_pte;
 
 		int 			_size;
+		
 
 	public:
 
@@ -363,7 +372,7 @@ namespace ft {
 
 
 		// Constructors
-		explicit	list( const allocator_type& alloc = allocator_type() ) : _front( 0 ), _back( 0 ), _pte( 0 ), _size( 0 ) {
+		explicit	list( const allocator_type& alloc = allocator_type() ) : _front( NULL ), _back( NULL ), _pte( 0 ), _size( 0 ) {
 
 			allocator_type() = alloc;
 
@@ -383,14 +392,17 @@ namespace ft {
 		// Destructor
 		virtual ~list() {
 
-			listNode<T>	*current( this->_front );
+			if ( this->_front ) {
 
-			while ( current != this->_pte ) {
+				listNode<T>	*current( this->_front );
 
-				listNode<T>	*next( current->next );
+				while ( current != this->_pte ) {
 
-				delete current;
-				current = next;
+					listNode<T>	*next( current->next );
+
+					delete current;
+					current = next;
+				}
 			}
 			delete this->_pte;
 		}
@@ -426,16 +438,45 @@ namespace ft {
 
 
 		// Element access
-		reference 				front() { return this->_front->data; }
-		const_reference 		front() const { return this->_front->data; }
+		reference 				front() {
 
-		reference 				back() { return this->_back->data; }
+			if ( this->_front )
+				return this->_front->data;
+			return this->_pte->data;
+		}
+		const_reference 		front() const {
+			if ( this->_front )
+				return this->_front->data;
+			return this->_pte->data;
+		}
+
+		reference 				back() {
+
+			if ( this->_back )
+				return this->_back->data;
+			return this->_pte->data;
+		}
 		const_reference 		back() const { return this->_back->data; }
 
+
 		// Modifiers
+
 		template < class InputIterator >
-		void	 				assign( InputIterator first, InputIterator last );
-		void 					assign( size_type n, const value_type& val );
+		void	 				assign( InputIterator first, InputIterator last, typename InputIterator::value_type = 0) {
+
+			this->clear();
+			for ( ; first != last; ++first )
+				this->push_back( *first );
+
+		}
+		void 					assign( size_type n, const value_type& val ) {
+
+			std::cout << "Normal assign" << std::endl;
+			this->clear();
+
+			for ( size_type i = 0; i < n; i++ )
+				this->push_back( val );
+		}
 
 		void					push_front( const value_type& val ) {
 
@@ -536,7 +577,28 @@ namespace ft {
 
 		void 					resize( size_type n, value_type val = value_type() );
 
-		void 					clear();
+		void 					clear() {
+
+			if ( !this->_front )
+				return;
+
+			listNode<T>	*current( this->_front );
+
+			while ( current != this->_pte ) {
+
+				listNode<T>	*next( current->next );
+
+				delete current;
+				current = next;
+			}
+			this->_front = 0;
+			this->_back = 0;
+			this->_size = 0;
+
+			this->_pte->data = this->_size;
+			this->_pte->next = this->_front;
+			this->_pte->prev = this->_back;
+		}
 
 
 		// Operations

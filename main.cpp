@@ -261,12 +261,53 @@ void	capacity() {
 	std::cout << "myList: " << myList.max_size() << std::endl << std::endl;
 }
 
+void	modifiers() {
+
+	// assign
+	ft::list<int>	first;
+	ft::list<int>	second;
+
+	first.assign( 7, 100 );
+
+	second.assign( first.begin(), first.end() );
+
+	int	myints[] = { 1776, 7, 4 };
+	first.assign( myints, myints + 3 );
+
+	std::cout << "Size of first: " << int ( first.size() ) << std::endl;
+	std::cout << "Size of second: " << int( second.size() ) << std::endl << std::endl;
+
+	// insert
+
+	// erase
+
+	// swap
+
+	// resize
+
+	// clear
+	ft::list<int>	myList;
+
+	myList.push_back( 100 );
+	myList.push_back( 200 );
+	myList.push_back( 300 );
+
+	printContainer( myList );
+
+	myList.clear();
+	myList.push_back( 1101 );
+	myList.push_back( 2202 );
+
+	printContainer( myList );
+}
+
 int 	main() {
 
 	iterators();
 	reverse_iterators();
 	push_pop_front_back();
 	capacity();
+	modifiers();
 
 	return 0;
 }
