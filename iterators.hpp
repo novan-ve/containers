@@ -33,44 +33,44 @@ namespace ft {
 		typedef typename	Iterator::iterator_category	iterator_category;
 	};
 
-	template < class U >
-	class ft_iterator_traits<U*> {
+	template < class T >
+	class ft_iterator_traits<T*> {
 
 	public:
 
 		typedef				ptrdiff_t					difference_type;
-		typedef				U							value_type;
-		typedef				U*							pointer;
-		typedef				U&							reference;
+		typedef				T							value_type;
+		typedef				T*							pointer;
+		typedef				T&							reference;
 		typedef				random_access_iterator_tag	iterator_category;
 	};
 
-	template < class U >
-	class ft_iterator_traits< const U* > {
+	template < class T >
+	class ft_iterator_traits< const T* > {
 
 	public:
 
 		typedef				ptrdiff_t					difference_type;
-		typedef				U							value_type;
-		typedef				const U*					pointer;
-		typedef				const U&					reference;
+		typedef				T							value_type;
+		typedef				const T*					pointer;
+		typedef				const T&					reference;
 		typedef				random_access_iterator_tag	iterator_category;
 	};
 
-	template < typename U >
+	template < typename T >
 	class ft_bidirectional_iterator {
 
 	public:
 
-		typedef		U							value_type;
+		typedef		T							value_type;
 		typedef		ptrdiff_t					difference_type;
-		typedef		U*							pointer;
-		typedef		U&							reference;
+		typedef		T*							pointer;
+		typedef		T&							reference;
 		typedef		bidirectional_iterator_tag	iterator_category;
 
 
 		ft_bidirectional_iterator() : _node( 0 ) {}
-		ft_bidirectional_iterator( listNode<U>* p ) : _node( p ) {}
+		ft_bidirectional_iterator( listNode<T>* p ) : _node( p ) {}
 		ft_bidirectional_iterator( const ft_bidirectional_iterator& src ) {
 			*this = src;
 		}
@@ -92,7 +92,7 @@ namespace ft {
 			if ( !this->_node )
 				return *this;
 
-			ft_bidirectional_iterator<U>	tmp( *this );
+			ft_bidirectional_iterator<T>	tmp( *this );
 			this->_node = this->_node->next;
 			return tmp;
 		}
@@ -107,7 +107,7 @@ namespace ft {
 
 			if ( !this->_node )
 				return *this;
-			ft_bidirectional_iterator<U> tmp( *this );
+			ft_bidirectional_iterator<T> tmp( *this );
 			this->_node = this->_node->prev;
 			return tmp;
 		}
@@ -116,27 +116,27 @@ namespace ft {
 			this->_node = this->_node->prev;
 			return *this;
 		}
-		listNode<U>*		getNode() const { return this->_node; }
+		listNode<T>*		getNode() const { return this->_node; }
 
 	private:
 
-		listNode<U>*	_node;
+		listNode<T>*	_node;
 	};
 
-	template < typename U >
+	template < typename T >
 	class ft_const_bidirectional_iterator {
 
 	public:
 
-		typedef		U							value_type;
+		typedef		T							value_type;
 		typedef		ptrdiff_t					difference_type;
-		typedef		const U*					pointer;
-		typedef		const U&					reference;
+		typedef		const T*					pointer;
+		typedef		const T&					reference;
 		typedef		bidirectional_iterator_tag	iterator_category;
 
 		ft_const_bidirectional_iterator() : _node( 0 ) {}
-		ft_const_bidirectional_iterator( const listNode<U>* p ) : _node( p ) {}
-		ft_const_bidirectional_iterator( const ft_bidirectional_iterator<U>& x ) : _node( x.getNode() ) {}
+		ft_const_bidirectional_iterator( const listNode<T>* p ) : _node( p ) {}
+		ft_const_bidirectional_iterator( const ft_bidirectional_iterator<T>& x ) : _node( x.getNode() ) {}
 		ft_const_bidirectional_iterator( const ft_const_bidirectional_iterator& src ) {
 			*this = src;
 		}
@@ -158,7 +158,7 @@ namespace ft {
 			if ( !this->_node )
 				return *this;
 
-			ft_const_bidirectional_iterator<U>	tmp( *this );
+			ft_const_bidirectional_iterator<T>	tmp( *this );
 			this->_node = this->_node->next;
 			return tmp;
 		}
@@ -173,7 +173,7 @@ namespace ft {
 
 			if ( !this->_node )
 				return *this;
-			ft_const_bidirectional_iterator<U> tmp( *this );
+			ft_const_bidirectional_iterator<T> tmp( *this );
 			this->_node = this->_node->prev;
 			return tmp;
 		}
@@ -185,7 +185,17 @@ namespace ft {
 
 	private:
 
-		const listNode<U>*	_node;
+		const listNode<T>*	_node;
+	};
+
+	template < typename T >
+	class ft_random_access_iterator {
+
+	};
+
+	template < typename T >
+	class ft_const_random_access_iterator {
+
 	};
 
 	template < typename Iterator >

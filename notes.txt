@@ -16,5 +16,8 @@ Const iterator
 https://gcc.gnu.org/onlinedocs/gcc-4.6.2/libstdc++/api/a00344.html
 Reverse iterator
 https://gcc.gnu.org/onlinedocs/gcc-4.6.2/libstdc++/api/a00693.html
-Implementation
+
+List implementation
 https://codefreakr.com/how-is-c-stl-list-implemented-internally/
+Vector implementation
+https://codefreakr.com/how-is-c-stl-implemented-internally/
