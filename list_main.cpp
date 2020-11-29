@@ -1,288 +1,636 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   main_list.cpp                                      :+:    :+:            */
+/*   list_main.cpp                                      :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: novan-ve <novan-ve@student.codam.n>          +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2020/11/13 14:00:45 by novan-ve      #+#    #+#                 */
-/*   Updated: 2020/11/13 14:00:48 by novan-ve      ########   odam.nl         */
+/*   Created: 2020/11/29 17:00:16 by novan-ve      #+#    #+#                 */
+/*   Updated: 2020/11/29 17:00:18 by novan-ve      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "List.hpp"
 #include <iostream>
-#include <iomanip>
+#include <cmath>
 #include <list>
-#include <math.h>
-
-bool	single_digit (const int& value) { return (value<10); }
-
-bool	is_near ( int first, int second ) { return ( fabs ( first - second ) < 5 ); }
-
-bool	my_comparison( double first, double second ) { return ( static_cast<int>( first ) < static_cast<int>( second ) ); }
-
-bool 	is_bigger( double first, double second ) { return ( first > second ); }
 
 template< typename T >
-void 	printContainer( const T & con ) {
+void	printContainer( const T & con, const char* str ) {
 
-	for ( typename T::const_iterator it = con.begin(); it != con.end(); ++it ) {
-
-		std::cout << *it;
-		if ( it != --con.end() )
-			std::cout << ", ";
-	}
+	std::cout << str << ":";
+	for ( typename T::const_iterator it = con.begin(); it != con.end(); ++it )
+		std::cout << ' ' << *it;
 	std::cout << std::endl;
 }
 
-int		main() {
+void 	iterators() {
 
-	// Member functions
-	std::list<int>	first;
-	std::list<int>	second( 4, 80 );
-	std::list<int>	third( second.begin(), second.end() );
-	std::list<int>	fourth( third );
+	std::cout << "************************* iterators *************************" << std::endl;
 
-	int 	myInts[] = { 16, 22, 77, 29 };
-	std::list<int>	fifth( myInts, myInts + sizeof( myInts ) / sizeof( int ) );
+	ft::list<int>	myList;
 
+	for ( int i = 0; i < 10; i++ )
+		myList.push_back( i );
 
-	// Iterators
+	printContainer( myList, "myList" );
 
-	std::cout << "Iterators ( begin, end )" << std::endl;
-	std::cout << "fifth: ";
-	for ( std::list<int>::const_iterator it1 = fifth.begin(); it1 != fifth.end(); ++it1 )
-		std::cout << *it1 << " ";
-	std::cout << std::endl << std::endl;
+	ft::list<int>::iterator		from( myList.begin() );
+	ft::list<int>::iterator 	until( myList.end() );
 
-	std::cout << "Reverse iterators ( rbegin, rend )" << std::endl;
-	std::cout << "fifth: ";
-	for ( std::list<int>::const_reverse_iterator it2 = fifth.rbegin(); it2 != fifth.rend(); ++it2 )
-		std::cout << *it2 << " ";
-	std::cout << std::endl << std::endl;
+	ft::list<int>::iterator		from2( from );
+	ft::list<int>::iterator 	until2( until );
 
+	std::cout << "myList:";
+	while ( from != until ) {
+		std::cout << ' ' << *from;
+		from++;
+	}
+	std::cout << std::endl;
 
-	// Capacity
+	std::cout << "myList:";
+	while ( from2 != until2 ) {
+		std::cout << ' ' << *from2;
+		from2++;
+	}
+	std::cout << std::endl;
 
-	std::cout << "first.empty():\t" << first.empty() << std::endl;
-	std::cout << "fifth.empty():\t" << fifth.empty() << std::endl << std::endl;
+	ft::list<int>::iterator		it = myList.begin();
 
-	std::cout << "first.size():\t" << first.size() << std::endl;
-	std::cout << "fifth.size():\t" << fifth.size() << std::endl << std::endl;
+	std::cout << "begin:\t\t" << *it << std::endl;
+	it++;
+	std::cout << "begin++:\t" << *it << std::endl;
+	it--;
+	std::cout << "begin--:\t" << *it << std::endl;
 
-	std::cout << "first.max_size():\t" << first.max_size() << std::endl;
-	std::cout << "fifth.max_size():\t" << fifth.max_size() << std::endl << std::endl;
+	ft::list<int>::iterator		compare = myList.begin();
 
+	if ( compare == it )
+		std::cout << "Equal" << std::endl;
+	else
+		std::cout << "Not equal" << std::endl;
 
-	// Element access
+	compare++;
 
-	std::cout << "fifth.front():\t" << fifth.front() << std::endl;
-	std::cout << "fifth.back():\t" << fifth.back() << std::endl << std::endl;
+	if ( compare == it )
+		std::cout << "Equal" << std::endl;
+	else
+		std::cout << "Not equal" << std::endl;
 
+	std::cout << "myList:";
+	for ( ft::list<int>::const_iterator it2( it ); it2 != myList.end(); it2++ )
+		std::cout << ' ' << *it2;
+	std::cout << std::endl << std::endl << std::endl;
+}
 
-	// Modifiers
+void 	reverse_iterators() {
 
-	std::cout << std::setw( 28 ) << std::left << "second:";
-	printContainer( second );
+	std::cout << "******************** Reverse iterators **********************" << std::endl;
 
-	std::cout << std::setw( 28 ) << std::left << "third:";
-	printContainer( third );
+	// ******************** Constructors ********************
 
-	std::cout << std::setw( 28 ) << std::left << "second.assign( 4, 100 ):";
-	second.assign( 4, 100 );
-	printContainer( second );
+	ft::list<int>	myList;
 
-	std::cout << std::setw( 28 ) << std::left << "second.push_front( 25 ):";
-	second.push_front( 25 );
-	printContainer( second );
+	for ( int i = 0; i < 10; i++ )
+		myList.push_back( i );
 
-	std::cout << std::setw( 28 ) << std::left << "second.pop_front():";
-	second.pop_front();
-	printContainer( second );
+	typedef ft::list<int>::iterator iter_type;
 
-	std::cout << std::setw( 28 ) << std::left << "second.push_back( 125 ):";
-	second.push_back( 125 );
-	printContainer( second );
+	iter_type							from( myList.begin() );
+	iter_type							until( myList.end() );
 
-	std::cout << std::setw( 28 ) << std::left << "second.pop_back():";
-	second.pop_back();
-	printContainer( second );
+	ft::reverse_iterator<iter_type>	rev_until( from );
+	ft::reverse_iterator<iter_type>	rev_from( until );
 
-	std::list<int>::iterator	it = second.begin();
-	advance( it, 1 );
-	// it points to the second 100
+	std::cout << "myList:";
+	while ( rev_from != rev_until )
+		std::cout << ' ' << *rev_from++;
+	std::cout << std::endl;
 
-	std::cout << std::setw( 28 ) << std::left << "second.insert( it, 10 ):";
-	second.insert( it, 10 );
-	printContainer( second );
+	// ******************** base ********************
 
-	// it still points to the second 100
-	std::cout << std::setw( 28 ) << std::left << "second.insert( it, 2, 20 ):";
-	second.insert( it, 2, 20 );
-	printContainer( second );
+	ft::reverse_iterator<iter_type>	rev_end( myList.begin() );
+	ft::reverse_iterator<iter_type>	rev_begin( myList.end() );
 
-	--it;
-	// it now points to the second 20
-	std::cout << "second.insert( it, third.begin(), third.end() ):\t";
-	second.insert( it, third.begin(), third.end() );
-	printContainer( second );
+	std::cout << "myList:";
+	for ( iter_type it = rev_end.base(); it != rev_begin.base(); ++it )
+		std::cout << ' ' << *it;
+	std::cout << std::endl;
 
-	std::cout << std::setw( 28 ) << std::left << "second.erase( it ):";
-	second.erase( it );
-	printContainer( second );
+	from = myList.begin();
+	until = myList.end();
 
-	std::list<int>::iterator	it1 = second.begin();
-	std::list<int>::iterator 	it2 = it1;
-	advance( it1, 3 );
-	advance( it2, 9 );
+	// ******************** operator * ********************
+	ft::reverse_iterator<iter_type>	rev_until2( from );
+	ft::reverse_iterator<iter_type> rev_from2( until );
 
-	std::cout << std::setw( 28 ) << std::left << "second.erase( it1, it2 ):";
-	second.erase( it1, it2 );
-	printContainer( second );
-
-	std::cout << std::setw( 28 ) << std::left << "fifth:";
-	printContainer( fifth );
-
-	std::cout << std::setw( 28 ) << std::left << "second.swap( fifth ):";
-	second.swap( fifth );
-	printContainer( second );
-
-	std::cout << std::setw( 28 ) << std::left << "second.resize( 2 )";
-	second.resize( 2 );
-	printContainer( second );
-
-	std::cout << std::setw( 28 ) << std::left << "second.resize( 4, 100 )";
-	second.resize( 4, 100 );
-	printContainer( second );
-
-	std::cout << std::setw( 28 ) << std::left << "second.resize( 6 )";
-	second.resize( 6 );
-	printContainer( second );
-
-	std::cout << "second.clear()" << std::endl;
-	second.clear();
-	std::cout << "second.push_back( 1101 )" << std::endl;
-	second.push_back( 1101 );
-	std::cout << "second.push_back( 2202 )" << std::endl;
-	second.push_back( 2202 );
-	std::cout << std::setw( 28 ) << std::left << "second:";
-	printContainer( second );
+	std::cout << "myList:";
+	while ( rev_from2 != rev_until2 )
+		std::cout << ' ' << *rev_from2++;
 	std::cout << std::endl;
 
 
-	// Operations
+	// ******************** operator -- ********************
+
+	ft::reverse_iterator<iter_type>	rev_iterator = myList.rbegin();
+	ft::reverse_iterator<iter_type>	rev_begin2( myList.end() );
+	ft::reverse_iterator<iter_type>	rev_end2( myList.begin() );
+
+	rev_iterator = rev_begin2;
+
+	while ( rev_iterator != rev_end )
+		std::cout << *rev_iterator++ << ' ';
+	std::cout << std::endl;
+
+	while ( rev_iterator != rev_begin )
+		std::cout << *(--rev_iterator) << ' ';
+	std::cout << std::endl;
+
+
+	// ******************** relational operators ********************
+
+	ft::reverse_iterator<iter_type>	rev_iterator1 = myList.rend();
+	ft::reverse_iterator<iter_type>	rev_iterator2 = myList.rbegin();
+	ft::reverse_iterator<iter_type>	rev_iterator3 = myList.rend();
+
+	std::cout << "rev_iterator1 =\t" << *rev_iterator1 << std::endl;
+	std::cout << "rev_iterator2 =\t" << *rev_iterator2 << std::endl;
+	std::cout << "rev_iterator3 =\t" << *rev_iterator3 << std::endl << std::endl;
+
+	std::cout << std::boolalpha;
+	std::cout << "rev_iterator1 != rev_iterator2:\t" << (rev_iterator1 != rev_iterator2) << std::endl;
+	std::cout << "rev_iterator1 == rev_iterator2:\t" << (rev_iterator1 == rev_iterator2) << std::endl;
+	std::cout << "rev_iterator2 == rev_iterator3:\t" << (rev_iterator2 == rev_iterator3) << std::endl << std::endl;
+
+}
+
+void	constructors() {
+
+	std::cout << "*********************** Constructors ************************" << std::endl;
+
+	ft::list<int> first;
+	ft::list<int> second( 4, 100 );
+	ft::list<int> third( second.begin(), second.end() );
+	ft::list<int> fourth( third );
+
+	int	myInts[] = { 16, 2, 77, 29 };
+	ft::list<int> fifth( myInts, myInts + sizeof( myInts ) / sizeof( int ) );
+
+	ft::list<int> sixth;
+	sixth = fifth;
+
+	first.push_back( 15 );
+	first.push_back( 42 );
+
+	printContainer( first, "the contents of the first are" );
+	printContainer( second, "the contents of the second are" );
+	printContainer( third, "the contents of the third are" );
+
+	third.clear();
+
+	printContainer( fourth, "the contents of the fourth are" );
+	printContainer( fifth, "the contents of the fifth are" );
+
+	fifth.clear();
+
+	printContainer( sixth, "the contents of the sixth are" );
+	std::cout << std::endl;
+}
+
+void 	push_pop_front_back() {
+
+	std::cout << "******************** push_pop_front_back ********************" << std::endl;
+
+	ft::list<int>	myList;
+
+	myList.push_back( 15 );
+	myList.push_back( 28 );
+	myList.push_back( 42 );
+
+	printContainer( myList, "myList" );
+
+	myList.push_front( 7 );
+	myList.push_front( 5 );
+	myList.push_front( 3 );
+
+	printContainer( myList, "myList" );
+	std::cout << std::endl;
+
+	std::cout << "front:  " << myList.front() << std::endl;
+	std::cout << "back:   " << myList.back() << std::endl << std::endl;
+
+	myList.pop_back();
+	printContainer( myList, "myList" );
+
+	myList.pop_back();
+	printContainer( myList, "myList" );
+
+	myList.pop_back();
+	printContainer( myList, "myList" );
+
+	myList.pop_back();
+	printContainer( myList, "myList" );
+
+	myList.pop_back();
+	printContainer( myList, "myList" );
+
+	myList.push_back( 3 );
+	myList.push_back( 5 );
+	myList.push_back( 7 );
+	myList.push_back( 15 );
+	myList.push_back( 28 );
+	myList.push_back( 42 );
+
+	myList.pop_front();
+	printContainer( myList, "myList" );
+
+	myList.pop_front();
+	printContainer( myList, "myList" );
+
+	myList.pop_front();
+	printContainer( myList, "myList" );
+
+	myList.pop_front();
+	printContainer( myList, "myList" );
+
+	myList.pop_front();
+	printContainer( myList, "myList" );
+
+	myList.pop_front();
+	printContainer( myList, "myList" );
+	std::cout << std::endl << std::endl;
+}
+
+void	capacity() {
+
+	std::cout << "************************* Capacity **************************" << std::endl;
+
+	// empty
+	ft::list<int>	myList;
+	int				sum = 0;
+
+	for ( int i = 1; i <= 10; ++i )
+		myList.push_back( i );
+	while ( !myList.empty() ) {
+
+		sum += myList.front();
+		myList.pop_front();
+	}
+	std::cout << "total: " << sum << std::endl;
+
+	// size
+	ft::list<int>	myInts;
+	std::cout << "0. size: " << myInts.size() << std::endl;
+
+	for ( int i = 0; i < 10; i++ )
+		myInts.push_back( i );
+	std::cout << "1. size: " << myInts.size() << std::endl;
+
+	myInts.pop_back();
+	std::cout << "2. size: " << myInts.size() << std::endl;
+
+	// max_size
+
+	std::cout << "myInts: " << myInts.max_size() << std::endl;
+	std::cout << "myList: " << myList.max_size() << std::endl << std::endl;
+}
+
+void	modifiers() {
+
+	std::cout << "************************* Modifiers *************************" << std::endl;
+
+	// clear
+	ft::list<int>	myList;
+
+	myList.push_back( 100 );
+	myList.push_back( 200 );
+	myList.push_back( 300 );
+
+	printContainer( myList, "myList" );
+
+	myList.clear();
+	myList.push_back( 1101 );
+	myList.push_back( 2202 );
+
+	printContainer( myList, "myList" );
+
+	// assign
+	ft::list<int>	first;
+	ft::list<int>	second;
+
+	first.assign( 7, 100 );
+
+	second.assign( first.begin(), first.end() );
+
+	int 	myints[] = { 1776, 7, 4 };
+	first.assign( myints, myints + 3 );
+
+	std::cout << "Size of first: " << int ( first.size() ) << std::endl;
+	std::cout << "Size of second: " << int( second.size() ) << std::endl << std::endl;
+
+	// insert
+
+	myList.clear();
+
+	for ( int i = 1; i <= 5; ++i )
+		myList.push_back( i );
+
+	printContainer( myList, "myList" );
+
+	ft::list<int>::iterator it = myList.begin();
+
+	++it;
+
+	myList.insert( it, 10 );
+	printContainer( myList, "myList" );
+
+	myList.insert( it, 2, 20 );
+	printContainer( myList, "myList" );
+
+	--it;
+
+	ft::list<int>	myList2;
+
+	myList2.push_back( 30 );
+	myList2.push_back( 30 );
+
+	myList.insert( it, myList2.begin(), myList2.end() );
+	printContainer( myList, "myList" );
+	std::cout << std::endl;
+
+	// erase
+	myList.clear();
+
+	for ( int i = 1; i < 10; ++i )
+		myList.push_back( i * 10 );
+
+	ft::list<int>::iterator	it2 = myList.begin();
+	it = myList.begin();
+
+	for ( int i = 0; i < 6; ++i )
+		++it2;
+	++it;
+
+	it = myList.erase( it );
+	it2 = myList.erase( it2 );
+	printContainer( myList, "myList" );
+
+	++it;
+	--it2;
+
+	std::cout << *myList.erase( it, it2 ) << std::endl;
+	printContainer( myList, "myList" );
+
+	std::cout << myList.size() << std::endl;
+
+	std::cout << std::endl;
+
+	// swap
+	first.clear();
+	second.clear();
+
+	for ( int i = 0; i < 3; ++i )
+		first.push_back( 100 );
+
+	for ( int i = 0; i < 5; ++i )
+		second.push_back( 200 );
+
+	first.swap( second );
+
+	printContainer( first, "first contains" );
+	printContainer( second, "second contains" );
+
+	// resize
+	myList.clear();
+
+	for ( int i = 1; i < 10; ++i )
+		myList.push_back( i );
+
+	myList.resize( 5 );
+	myList.resize( 8, 100 );
+	myList.resize( 12 );
+
+	printContainer( myList, "myList" );
+	std::cout << std::endl;
+}
+
+// Comparisons for operations()
+bool	single_digit( const int& value ) { return ( value < 10 ); }
+
+struct	is_odd {
+	bool operator() ( const int& value ) { return ( value % 2 ) == 1; }
+};
+
+bool	compare_nocase( const std::string& first, const std::string& second ) {
+
+	unsigned int i = 0;
+
+	while ( ( i < first.length() ) && ( i < second.length() ) ) {
+
+		if ( tolower( first[i] ) < tolower( second[i] ) )
+			return true;
+		else if ( tolower( first[i] ) > tolower( second[i] ) )
+			return false;
+		++i;
+	}
+	return ( first.length() < second.length() );
+}
+
+bool	same_integral_part( double first, double second ) {
+	return ( int( first ) == int( second ) );
+}
+
+struct	is_near {
+	bool operator() ( double first, double second ) {
+		return ( fabs( first - second ) < 5.0 );
+	}
+};
+
+bool	mycomparison( double first, double second ) {
+	return ( int( first ) < int( second ) );
+}
+
+
+void	operations() {
+
+	std::cout << "************************ Operations *************************" << std::endl;
+
+	// splice
+	ft::list<int>	myList, myList2;
 
 	for ( int i = 1; i <= 4; ++i )
-		first.push_back( i );
-	second.clear();
+		myList.push_back( i );
+
 	for ( int i = 1; i <= 3; ++i )
-		second.push_back( i * 10 );
+		myList2.push_back( i * 10 );
 
-	std::cout << "first:\t";
-	printContainer( first );
-	std::cout << "second:\t";
-	printContainer( second );
+	ft::list<int>::iterator	it = myList.begin();
+	++it;
 
-	it = first.begin();
-	it++;
+	myList.splice( it, myList2 );
+	printContainer( myList, "myList" );
 
-	std::cout << std::endl << "first.splice( it, second )" << std::endl;
-	first.splice( it, second );
-	std::cout << "first:\t";
-	printContainer( first );
-	std::cout << "second:\t";
-	printContainer( second );
+	myList2.splice( myList2.begin(), myList, it );
+	printContainer( myList, "myList" );
 
-	std::cout << std::endl << "second.splice( second.begin(), first, it )" << std::endl;
-	second.splice( second.begin(), first, it );
-	std::cout << "first:\t";
-	printContainer( first );
-	std::cout << "it invalid" << std::endl;
-	std::cout << "second:\t";
-	printContainer( second );
+	it = myList.begin();
+	for ( int i = 0; i < 3; i++ )
+		it++;
 
-	it = first.begin();
-	std::advance( it, 3 );
-	std::cout << std::endl << "it == 30" << std::endl;
-	std::cout << "first.splice( first.begin(), first, it, first.end()" << std::endl;
-	first.splice( first.begin(), first, it, first.end() );
-	std::cout << "first:\t\t\t\t\t";
-	printContainer( first );
+	myList.splice( myList.begin(), myList, it, myList.end() );
+	printContainer( myList, "myList" );
+	printContainer( myList2, "myList2" );
+	std::cout << std::endl;
 
-	std::cout << "first.remove( 3 ):\t\t\t";
-	first.remove( 3 );
-	printContainer( first );
+	// remove
+	int		myInts[] = { 17, 89, 7, 89, 14 };
 
-	std::cout << "first.remove_if( single_digit ):\t";
-	first.remove_if( single_digit );
-	printContainer( first );
+	myList.clear();
+	for ( int i = 0; i < 5; i++ )
+		myList.push_back( myInts[i] );
 
-	std::cout << std::endl << "first.push_back( 20 ):\t\t\t";
-	first.push_back( 20 );
-	printContainer( first );
+	myList.remove( 89 );
+	printContainer( myList, "myList" );
+	std::cout << std::endl;
 
-	std::cout << "first.unique():\t\t\t\t";
-	first.unique();
-	printContainer( first );
+	// remove_if
+	int		myInts2[] = { 15, 36, 7, 17, 20, 39, 4, 1 };
 
-	std::cout << "first.push_back( 10 ):\t\t\t";
-	first.push_back( 10 );
-	printContainer( first );
+	myList.clear();
+	for ( int i = 0; i < 8; i++ )
+		myList.push_back( myInts2[i] );
 
-	std::cout << "first.unique():\t\t\t\t";
-	first.unique();
-	printContainer( first );
+	myList.remove_if( single_digit );
 
-	std::cout << "first.push_back( 12 ):\t\t\t";
-	first.push_back( 12 );
-	printContainer( first );
+	myList.remove_if( is_odd() );
 
-	std::cout << "first.unique( is_near ):\t\t";
-	first.unique( is_near );
-	printContainer( first );
+	printContainer( myList, "myList" );
+	std::cout << std::endl;
 
-	std::list<double> sixth, seventh;
+	// sort
+	ft::list<std::string>	mySlist;
 
-	sixth.push_back( 3.1 );
-	sixth.push_back( 2.2 );
-	sixth.push_back( 2.9 );
+	mySlist.push_back( "one" );
+	mySlist.push_back( "two" );
+	mySlist.push_back( "Three" );
 
-	seventh.push_back( 3.7 );
-	seventh.push_back( 1.4 );
-	seventh.push_back( 2.1 );
-	seventh.push_back( 5.2 );
+	printContainer( mySlist, "myList" );
 
-	std::cout << std::endl << "sixth:\t\t\t\t\t";
-	printContainer( sixth );
+	mySlist.sort();
+	printContainer( mySlist, "myList" );
 
-	std::cout << "seventh:\t\t\t\t";
-	printContainer( seventh );
+	mySlist.sort( compare_nocase );
+	printContainer( mySlist, "myList" );
+	std::cout << std::endl;
 
-	std::cout << "sixth.sort():\t\t\t\t";
-	sixth.sort();
-	printContainer( sixth );
+	// unique
 
-	std::cout << "seventh.sort( is_bigger ):\t\t";
-	seventh.sort( is_bigger );
-	printContainer( seventh );
+	double	myDoubles[] = { 12.15, 2.72, 73.0, 12.77, 3.14, 12.77, 73.35, 72.25, 15.3, 72.25 };
+	ft::list<double>	myDlist;
 
-	std::cout << "seventh.sort():\t\t\t\t";
-	seventh.sort();
-	printContainer( seventh );
+	for ( int i = 0; i < 10; i++ )
+		myDlist.push_back( myDoubles[i] );
 
-	std::cout << "sixth.merge( seventh ):\t\t\t";
-	sixth.merge( seventh );
-	printContainer( sixth );
+	myDlist.sort();
 
-	std::cout << "seventh.push_back( 2.1 ):\t\t";
-	seventh.push_back( 2.1 );
-	printContainer( seventh );
+	myDlist.unique();
+	printContainer( myDlist, "myList" );
 
-	std::cout << "sixth.merge( seventh, my_comparison ):\t";
-	sixth.merge( seventh, my_comparison );
-	printContainer( sixth );
+	myDlist.unique( same_integral_part );
+	printContainer( myDlist, "myList" );
 
-	std::cout << "sixth.reverse():\t\t\t";
-	sixth.reverse();
-	printContainer( sixth );
+	myDlist.unique( is_near() );
+	printContainer( myDlist, "myList" );
+	std::cout << std::endl;
+
+	// merge
+	myDlist.clear();
+	ft::list<double>	myDlist2;
+
+	myDlist.push_back( 3.1 );
+	myDlist.push_back( 2.2 );
+	myDlist.push_back( 2.9 );
+
+	myDlist2.push_back( 3.7 );
+	myDlist2.push_back( 7.1 );
+	myDlist2.push_back( 1.4 );
+
+	myDlist.sort();
+	myDlist2.sort();
+
+	myDlist.merge( myDlist2 );
+	printContainer( myDlist, "myList" );
+
+	myDlist2.push_back( 2.1 );
+
+	myDlist.merge( myDlist2, mycomparison );
+	printContainer( myDlist, "myList" );
+	std::cout << std::endl;
+
+	// reverse
+	myList.clear();
+
+	for ( int i = 1; i < 10; i++ )
+		myList.push_back( i );
+
+	myList.reverse();
+
+	printContainer( myList, "myList" );
+	std::cout << std::endl;
+}
+
+void	non_member() {
+
+	std::cout << "************************ Non_member *************************" << std::endl;
+
+	// relational operators
+	int	myInts[] = { 10, 20, 30 };
+	int myInts2[] = { 30, 20, 10 };
+
+	ft::list<int> a( myInts, myInts + sizeof( myInts ) / sizeof( int ) );
+	ft::list<int> b( myInts, myInts + sizeof( myInts ) / sizeof( int ) );
+	ft::list<int> c( myInts2, myInts2 + sizeof( myInts2 ) / sizeof( int ) );
+
+	printContainer( a, "a" );
+	printContainer( b, "b" );
+	printContainer( c, "c" );
+
+	std::cout << std::endl;
+
+	if ( a == b ) std::cout << "a and b are equal"				 << std::endl;
+	if ( b != c ) std::cout << "b and c are not equal"			 << std::endl;
+	if ( b <  c ) std::cout << "b is less than c"				 << std::endl;
+	if ( c >  b ) std::cout << "c is greater than b"			 << std::endl;
+	if ( a <= b ) std::cout << "a is less than or equal to b"	 << std::endl;
+	if ( a >= b ) std::cout << "a is greater than or equal to b" << std::endl;
+
+	std::cout << std::endl;
+
+	// swap
+
+	ft::list<int>	foo( 3, 100 );
+	ft::list<int>	bar( 5, 200 );
+
+	ft::swap( foo, bar );
+
+	printContainer( foo, "foo" );
+	printContainer( bar, "bar" );
+
+	std::cout << std::endl;
+}
+
+int 	list_main() {
+
+	iterators();
+	reverse_iterators();
+	constructors();
+	push_pop_front_back();
+	capacity();
+	modifiers();
+	operations();
+	non_member();
+
+	// system( "leaks a.out" );
+
+	return 0;
 }
