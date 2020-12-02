@@ -191,11 +191,189 @@ namespace ft {
 	template < typename T >
 	class ft_random_access_iterator {
 
+	public:
+
+		typedef		T							value_type;
+		typedef		ptrdiff_t					difference_type;
+		typedef		T*							pointer;
+		typedef		T&							reference;
+		typedef		random_access_iterator_tag	iterator_category;
+
+		ft_random_access_iterator() : _current() {}
+		ft_random_access_iterator( T* p ) : _current( p ) {}
+		ft_random_access_iterator( const ft_random_access_iterator& src ) { *this = src; }
+		ft_random_access_iterator&	operator=( const ft_random_access_iterator& rhs ) {
+
+			if ( this != &rhs )
+				this->_current = rhs._current;
+
+			return *this;
+		}
+		virtual ~ft_random_access_iterator() {}
+
+		reference			operator*() { return *this->_current; }
+		pointer				operator->() { return &( this->_current ); }
+		bool				operator!=( const ft_random_access_iterator& rhs ) const { return this->_current != rhs._current; }
+		bool 				operator==( const ft_random_access_iterator& rhs ) const { return this->_current == rhs._current; }
+		ft_random_access_iterator	operator++( int ) {
+
+			if ( !this->_current )
+				return *this;
+
+			ft_random_access_iterator<T>	tmp( *this );
+			this->_current++;
+			return tmp;
+		}
+		ft_random_access_iterator	operator++() {
+
+			if ( !this->_current )
+				return *this;
+
+			this->_current++;
+			return *this;
+		}
+		ft_random_access_iterator	operator--( int ) {
+
+			if ( !this->_current )
+				return *this;
+
+			ft_random_access_iterator<T>	tmp( *this );
+			this->_current--;
+			return tmp;
+		}
+		ft_random_access_iterator	operator--() {
+
+			if ( !this->_current )
+				return *this;
+
+			this->_current--;
+			return *this;
+		}
+		ft_random_access_iterator	operator+( const difference_type n ) {
+
+			return ft_random_access_iterator( this->_current + n );
+		}
+		ft_random_access_iterator	operator-( const difference_type n ) {
+
+			return ft_random_access_iterator( this->_current - n );
+		}
+		ft_random_access_iterator&	operator+=( const difference_type n ) {
+
+			this->_current += n;
+			return *this;
+		}
+		ft_random_access_iterator&	operator-=( const difference_type n ) {
+
+			this->_current -= n;
+			return *this;
+		}
+		reference					operator[]( const difference_type n ) {
+
+			return *( this->_current + n );
+		}
+		bool				operator< ( const ft_random_access_iterator& rhs ) const { return this->_current < rhs._current; }
+		bool 				operator>( const ft_random_access_iterator& rhs ) const { return this->_current > rhs._current; }
+		bool				operator<=( const ft_random_access_iterator& rhs ) const { return this->_current <= rhs._current; }
+		bool 				operator>=( const ft_random_access_iterator& rhs ) const { return this->_current >= rhs._current; }
+
+		T*					getCurrent() const { return this->_current; }
+
+	private:
+
+		T*		_current;
 	};
 
 	template < typename T >
 	class ft_const_random_access_iterator {
+	public:
 
+		typedef		T							value_type;
+		typedef		ptrdiff_t					difference_type;
+		typedef		const T*					pointer;
+		typedef		const T&					reference;
+		typedef		random_access_iterator_tag	iterator_category;
+
+		ft_const_random_access_iterator() : _current() {}
+		ft_const_random_access_iterator( const T* p ) : _current( p ) {}
+		ft_const_random_access_iterator( const ft_random_access_iterator<T>& x ) : _current( x.getCurrent() ) {}
+		ft_const_random_access_iterator( const ft_const_random_access_iterator& src ) : _current( src._current ) {}
+		ft_const_random_access_iterator&	operator=( const ft_const_random_access_iterator& rhs ) {
+
+			if ( this != &rhs )
+				this->_current = rhs._current;
+
+			return *this;
+		}
+		virtual ~ft_const_random_access_iterator() {}
+
+		reference			operator*() const { return *this->_current; }
+		pointer				operator->() const { return &( this->_current ); }
+		bool				operator!=( const ft_const_random_access_iterator& rhs ) const { return this->_current != rhs._current; }
+		bool 				operator==( const ft_const_random_access_iterator& rhs ) const { return this->_current == rhs._current; }
+		ft_const_random_access_iterator	operator++( int ) {
+
+			if ( !this->_current )
+				return *this;
+
+			ft_const_random_access_iterator<T>	tmp( *this );
+			this->_current++;
+			return tmp;
+		}
+		ft_const_random_access_iterator	operator++() {
+
+			if ( !this->_current )
+				return *this;
+
+			this->_current++;
+			return *this;
+		}
+		ft_const_random_access_iterator	operator--( int ) {
+
+			if ( !this->_current )
+				return *this;
+
+			ft_const_random_access_iterator<T>	tmp( *this );
+			this->_current--;
+			return tmp;
+		}
+		ft_const_random_access_iterator	operator--() {
+
+			if ( !this->_current )
+				return *this;
+
+			this->_current--;
+			return *this;
+		}
+		ft_const_random_access_iterator	operator+( const difference_type n ) const {
+
+			return ft_const_random_access_iterator( this->_current + n );
+		}
+		ft_const_random_access_iterator	operator-( const difference_type n ) const {
+
+			return ft_const_random_access_iterator( this->_current - n );
+		}
+		ft_const_random_access_iterator&	operator+=( const difference_type n ) {
+
+			this->_current += n;
+			return *this;
+		}
+		ft_const_random_access_iterator&	operator-=( const difference_type n ) {
+
+			this->_current -= n;
+			return *this;
+		}
+		reference					operator[]( const difference_type n ) const {
+
+			return *( this->_current + n );
+		}
+		bool				operator< ( const ft_const_random_access_iterator& rhs ) const { return this->_current < rhs._current; }
+		bool 				operator>( const ft_const_random_access_iterator& rhs ) const { return this->_current > rhs._current; }
+		bool				operator<=( const ft_const_random_access_iterator& rhs ) const { return this->_current <= rhs._current; }
+		bool 				operator>=( const ft_const_random_access_iterator& rhs ) const { return this->_current >= rhs._current; }
+
+	private:
+
+		const T*		_current;
 	};
 
 	template < typename Iterator >

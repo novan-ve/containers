@@ -42,9 +42,10 @@ namespace ft {
 
 
 		// Constructors
-		explicit vector( const allocator_type& alloc = allocator_type() ) : _array( new T[4] ), _size( 0 ), _reserved( 0 ) {
+		explicit vector( const allocator_type& alloc = allocator_type() ) : _array( new T[5] ), _size( 0 ), _reserved( 4 ) {
 
 			allocator_type() = alloc;
+			this->_array[0] = value_type();
 		}
 
 		explicit vector( size_type n, const value_type& val = value_type() );
@@ -60,5 +61,70 @@ namespace ft {
 		}
 
 		vector&	operator=( const vector& x );
+
+		// Iterators
+
+		iterator				begin() { return iterator( this->_array ); }
+		const_iterator			begin() const { return const_iterator( this->_array ); }
+
+		iterator 				end() { return iterator( &this->_array[this->_size] ); }
+		const_iterator			end() const { return const_iterator( &this->_array[this->_size] ); }
+
+		reverse_iterator		rbegin() { return reverse_iterator( &this->_array[this->_size] ); }
+		const_reverse_iterator	rbegin() const { return const_reverse_iterator( &this->_array[this->_size] ); }
+
+		reverse_iterator 		rend() { return reverse_iterator( this->_array ); }
+		const_reverse_iterator	rend() const { return const_reverse_iterator( this->_array ); }
+
+		// Capacity
+
+		void	resize( size_type n, value_type val = value_type() ) {
+
+			T*	array = new T[ n + 1 ];
+
+			for ( size_type i = 0; i < n; i++ ) {
+
+				if ( i < this->_size )
+					array[i] = this->_array[i];
+				else
+					array[i] = val;
+			}
+			delete [] this->_array;
+
+			this->_array = array;
+			this->_reserved = n;
+
+			if ( n < this->_size )
+				this->_size = n;
+			this->_array[this->_size] = this->_size;
+		}
+
+		// Modifiers
+
+		void	push_back( const value_type& val ) {
+
+			if ( this->_size == this->_reserved )
+				resize( this->_size + 4 );
+
+			this->_array[this->_size + 1] = this->_array[this->_size];
+			this->_array[this->_size] = val;
+
+			this->_size++;
+
+			this->_array[this->_size]++;
+		}
+
+		void	pop_back() {
+
+			this->resize( this->_size - 1 );
+		}
+
+		// Element access
+
+		reference		front() { return this->_array[0]; };
+		const_reference	front() const { return this->_array[0]; }
+
+		reference		back() { return this->_array[this->_size - 1]; }
+		const_reference	back() const { return this->_array[this->_size - 1]; }
 	};
 }

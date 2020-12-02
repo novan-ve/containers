@@ -11,10 +11,12 @@
 /* ************************************************************************** */
 
 int		list_main();
+int 	vector_main();
 
 int		main() {
 
-	list_main();
+	// list_main();
+	vector_main();
 
 	return 0;
 }
