@@ -249,11 +249,11 @@ namespace ft {
 			this->_current--;
 			return *this;
 		}
-		ft_random_access_iterator	operator+( const difference_type n ) {
+		ft_random_access_iterator	operator+( const difference_type n ) const {
 
 			return ft_random_access_iterator( this->_current + n );
 		}
-		ft_random_access_iterator	operator-( const difference_type n ) {
+		ft_random_access_iterator	operator-( const difference_type n ) const {
 
 			return ft_random_access_iterator( this->_current - n );
 		}
@@ -417,7 +417,7 @@ namespace ft {
 		}
 		reverse_iterator&	operator+=( difference_type n ) {
 
-			this->_current -= n;
+			this->current -= n;
 			return *this;
 		}
 		reverse_iterator		operator-( difference_type n ) const {
@@ -514,6 +514,6 @@ namespace ft {
 			const reverse_iterator<Iterator>& lhs,
 			const reverse_iterator<Iterator>& rhs) {
 
-		return rhs.base() - lhs.base();
+		return *rhs.base() - *lhs.base();
 	}
 }

@@ -11,10 +11,9 @@
 /* ************************************************************************** */
 
 #include "Vector.hpp"
-#include <vector>
 
 template< typename T >
-void	printContainer( const T & con, const char* str ) {
+void	printContainer( const T & con, const char* str = "myVector" ) {
 
 	std::cout << str << ":";
 	for ( typename T::const_iterator it = con.begin(); it != con.end(); ++it )
@@ -31,7 +30,7 @@ void 	iterators_vector() {
 	for ( int i = 0; i < 10; i++ )
 		myVector.push_back( i );
 
-	printContainer( myVector, "myVector" );
+	printContainer( myVector );
 
 	ft::vector<int>::iterator	from( myVector.begin() );
 	ft::vector<int>::iterator 	until( myVector.end() );
@@ -81,6 +80,139 @@ void 	iterators_vector() {
 	std::cout << std::endl << std::endl << std::endl;
 }
 
+void	reverse_iterators_vector() {
+
+	std::cout << "******************** Reverse iterators ********************" << std::endl;
+
+	// ******************** Constructors ********************
+
+	ft::vector<int>	myVector;
+
+	for ( int i = 0; i < 10; i++ )
+		myVector.push_back( i );
+
+	typedef ft::vector<int>::iterator iter_type;
+
+	iter_type							from( myVector.begin() );
+	iter_type							until( myVector.end() );
+
+	ft::reverse_iterator<iter_type>	rev_until( from );
+	ft::reverse_iterator<iter_type>	rev_from( until );
+
+	std::cout << "myVector:";
+	while ( rev_from != rev_until )
+		std::cout << ' ' << *rev_from++;
+	std::cout << std::endl;
+
+	// ******************** base ********************
+
+	ft::reverse_iterator<iter_type>	rev_end( myVector.begin() );
+	ft::reverse_iterator<iter_type>	rev_begin( myVector.end() );
+
+	std::cout << "myVector:";
+	for ( iter_type it = rev_end.base(); it != rev_begin.base(); ++it )
+		std::cout << ' ' << *it;
+	std::cout << std::endl;
+
+	from = myVector.begin();
+	until = myVector.end();
+
+	// ******************** operator * ********************
+	ft::reverse_iterator<iter_type>	rev_until2( from );
+	ft::reverse_iterator<iter_type> rev_from2( until );
+
+	std::cout << "myVector:";
+	while ( rev_from2 != rev_until2 )
+		std::cout << ' ' << *rev_from2++;
+	std::cout << std::endl;
+
+	// ******************** operator + ********************
+
+	ft::reverse_iterator<iter_type>	rev_it;
+
+	rev_it = myVector.rbegin() + 3;
+	std::cout << "The fourth element from the end is: " << *rev_it << std::endl;
+
+	// ******************** operator += ********************
+
+	ft::reverse_iterator<iter_type>	rev_iterator = myVector.rbegin();
+
+	rev_iterator += 2;
+
+	std::cout << "The third element from the end is: " << *rev_iterator << std::endl;
+
+	// ******************** operator - ********************
+
+	rev_iterator = myVector.rend() - 3;
+
+	std::cout << "myVector.rend()-3 points to: " << *rev_iterator << std::endl;
+
+	// ******************** operator -- ********************
+
+	ft::reverse_iterator<iter_type>	rev_begin2( myVector.end() );
+	ft::reverse_iterator<iter_type>	rev_end2( myVector.begin() );
+
+	rev_iterator = rev_begin2;
+
+	while ( rev_iterator != rev_end )
+		std::cout << *rev_iterator++ << ' ';
+	std::cout << std::endl;
+
+	while ( rev_iterator != rev_begin )
+		std::cout << *(--rev_iterator) << ' ';
+	std::cout << std::endl;
+
+	// ******************** operator -= ********************
+
+	rev_iterator = myVector.rend();
+
+	rev_iterator -= 4;
+
+	std::cout << "rev_iterator now points to: " << *rev_iterator << std::endl;
+
+	// ******************** operator [] ********************
+
+	rev_iterator = myVector.rbegin();
+
+	std::cout << "The fourth element from the end is: " << rev_iterator[3] << std::endl << std::endl;
+
+	// ******************** relational operators ********************
+
+	ft::reverse_iterator<iter_type>	rev_iterator1 = myVector.rend() - 5;
+	ft::reverse_iterator<iter_type>	rev_iterator2 = myVector.rbegin() + 4;
+	ft::reverse_iterator<iter_type>	rev_iterator3 = myVector.rend() - 3;
+
+	std::cout << "rev_iterator1 =\t" << *rev_iterator1 << std::endl;
+	std::cout << "rev_iterator2 =\t" << *rev_iterator2 << std::endl;
+	std::cout << "rev_iterator3 =\t" << *rev_iterator3 << std::endl << std::endl;
+
+	std::cout << std::boolalpha;
+	std::cout << "rev_iterator1 != rev_iterator2:\t" << (rev_iterator1 != rev_iterator2) << std::endl;
+	std::cout << "rev_iterator1 == rev_iterator2:\t" << (rev_iterator1 == rev_iterator2) << std::endl;
+	std::cout << "rev_iterator2 == rev_iterator3:\t" << (rev_iterator2 == rev_iterator3) << std::endl;
+	std::cout << "rev_iterator1 <  rev_iterator2:\t" << (rev_iterator1 <  rev_iterator2) << std::endl;
+	std::cout << "rev_iterator1 <= rev_iterator2:\t" << (rev_iterator1 <= rev_iterator2) << std::endl;
+	std::cout << "rev_iterator1 >  rev_iterator2:\t" << (rev_iterator1 >  rev_iterator2) << std::endl;
+	std::cout << "rev_iterator1 >= rev_iterator2:\t" << (rev_iterator1 >= rev_iterator2) << std::endl;
+	std::cout << "rev_iterator2 <= rev_iterator3:\t" << (rev_iterator2 <= rev_iterator3) << std::endl;
+	std::cout << "rev_iterator2 >= rev_iterator3:\t" << (rev_iterator2 >= rev_iterator3) << std::endl;
+	std::cout << "rev_iterator2 <  rev_iterator3:\t" << (rev_iterator2 <  rev_iterator3) << std::endl;
+	std::cout << "rev_iterator2 >  rev_iterator3:\t" << (rev_iterator2 >  rev_iterator3) << std::endl << std::endl;
+
+	// ******************** operator + (non member) ********************
+
+	rev_it = 3 + myVector.rbegin();
+
+	std::cout << "The fourth element from the end is: " << *rev_it << std::endl << std::endl;
+
+	// ******************** operator - (non member) ********************
+
+	rev_from = myVector.rbegin();
+	rev_until = myVector.rend();
+
+	std::cout << "myVector has " << (rev_until - rev_from) << " elements." << std::endl << std::endl;
+}
+
 void 	push_pop_front_back_vector() {
 
 	std::cout << "******************** push_pop_front_back ********************" << std::endl;
@@ -91,39 +223,240 @@ void 	push_pop_front_back_vector() {
 	myVector.push_back( 28 );
 	myVector.push_back( 42 );
 
-	printContainer( myVector, "myVector" );
+	printContainer( myVector );
 
 	myVector.push_back( 7 );
 	myVector.push_back( 5 );
 	myVector.push_back( 3 );
 
-	printContainer( myVector, "myVector" );
+	printContainer( myVector );
 	std::cout << std::endl;
 
 	std::cout << "front:  " << myVector.front() << std::endl;
 	std::cout << "back:   " << myVector.back() << std::endl << std::endl;
 
 	myVector.pop_back();
-	printContainer( myVector, "myVector" );
+	printContainer( myVector );
 
 	myVector.pop_back();
-	printContainer( myVector, "myVector" );
+	printContainer( myVector );
 
 	myVector.pop_back();
-	printContainer( myVector, "myVector" );
+	printContainer( myVector );
 
 	myVector.pop_back();
-	printContainer( myVector, "myVector" );
+	printContainer( myVector );
 
 	myVector.pop_back();
-	printContainer( myVector, "myVector" );
+	printContainer( myVector );
+}
+
+void	capacity_vector() {
+
+	std::cout << "************************* Capacity **************************" << std::endl;
+
+	// empty
+	ft::vector<int>	myVector;
+	int				sum = 0;
+
+	for ( int i = 1; i <= 10; ++i )
+		myVector.push_back( i );
+	while ( !myVector.empty() ) {
+
+		sum += myVector.back();
+		myVector.pop_back();
+	}
+	std::cout << "total: " << sum << std::endl;
+
+	// size
+	ft::vector<int>	myInts;
+	std::cout << "0. size: " << myInts.size() << std::endl;
+
+	for ( int i = 0; i < 10; i++ )
+		myInts.push_back( i );
+	std::cout << "1. size: " << myInts.size() << std::endl;
+
+	myInts.pop_back();
+	std::cout << "2. size: " << myInts.size() << std::endl;
+
+	// max_size
+
+	std::cout << "myInts: " << myInts.max_size() << std::endl;
+	std::cout << "myVector: " << myVector.max_size() << std::endl;
+
+	// capacity
+	ft::vector<int>	myVector2;
+
+	for ( int i = 0; i < 100; i++ )
+		myVector2.push_back( i );
+
+	std::cout << "size: " << myVector2.size() << std::endl;
+	std::cout << "capacity: " << myVector2.capacity() << std::endl;
+	std::cout << "max_size: " << myVector2.max_size() << std::endl;
+
+	// resize
+	ft::vector<int>	myVector3;
+
+	for ( int i = 1; i <= 10; ++i )
+		myVector3.push_back( i );
+	std::cout << std::endl;
+
+	myVector3.resize( 5 );
+	myVector3.resize( 8, 100 );
+	myVector3.resize( 12 );
+
+	printContainer( myVector3 );
+
+	// reserve
+	ft::vector<int>::size_type	sz;
+
+	ft::vector<int>	foo;
+	sz = foo.capacity();
+
+	std::cout << "Making foo grow:" << std::endl;
+	for ( int i = 0; i < 100; ++i ) {
+		foo.push_back(i);
+		if ( sz != foo.capacity() ) {
+			sz = foo.capacity();
+			std::cout << "capacity changed: " << sz << std::endl;
+		}
+	}
+
+	ft::vector<int>	bar;
+	sz = bar.capacity();
+
+	bar.reserve( 100 );
+
+	std::cout << "Making bar grow:" << std::endl;
+	for ( int i = 0; i < 100; ++i ) {
+		bar.push_back(i);
+		if ( sz != bar.capacity() ) {
+			sz = bar.capacity();
+			std::cout << "capacity changed: " << sz << std::endl;
+		}
+	}
+	std::cout << std::endl;
+}
+
+void	element_access_vector() {
+
+	std::cout << "*********************** element_access **********************" << std::endl;
+
+	// operator[]
+	ft::vector<int>	myVector( 10 );
+
+	ft::vector<int>::size_type	sz = myVector.size();
+
+	for ( size_t i = 0; i < sz; i++ )
+		myVector[i] = i;
+
+	for ( size_t i = 0; i < sz / 2; i++ ) {
+
+		int	temp;
+		temp = myVector[sz-1-i];
+		myVector[sz-1-i] = myVector[i];
+		myVector[i] = temp;
+	}
+	printContainer( myVector );
+	std::cout << std::endl;
+
+	// at
+	for ( size_t i = 0; i < myVector.size(); i++ )
+		myVector.at( i ) = i;
+
+	printContainer( myVector );
+	std::cout << std::endl;
+
+	// front
+	ft::vector<int>	myVector2;
+
+	myVector2.push_back( 78 );
+	myVector2.push_back( 16 );
+
+	myVector2.front() -= myVector2.back();
+
+	std::cout << "myVector.front() is now " << myVector2.front() << std::endl << std::endl;
+
+	// back
+	myVector2.pop_back();
+	myVector2.pop_back();
+
+	myVector2.push_back( 10 );
+
+	while ( myVector2.back() != 0 )
+		myVector2.push_back( myVector2.back() - 1 );
+
+	printContainer( myVector2 );
+	std::cout << std::endl;
+}
+
+void	modifiers_vector() {
+
+	std::cout << "************************* Modifiers *************************" << std::endl;
+
+	// clear
+	ft::vector<int> myVector;
+
+	myVector.push_back(100);
+	myVector.push_back(200);
+	myVector.push_back(300);
+
+	printContainer( myVector );
+
+	myVector.clear();
+	myVector.push_back(1101);
+	myVector.push_back(2202);
+
+	printContainer( myVector );
+	std::cout << std::endl;
+
+	// assign
+	ft::vector<int>	first;
+	ft::vector<int>	second;
+	ft::vector<int>	third;
+
+	first.assign( 7, 100 );
+
+	ft::vector<int>::iterator it;
+	it = first.begin() + 1;
+
+	second.assign( it, first.end() - 1 );
+
+	int 	myints[] = { 1776, 7, 4 };
+	third.assign( myints, myints + 3 );
+
+	std::cout << "Size of first: " << int ( first.size() ) << std::endl;
+	std::cout << "Size of second: " << int( second.size() ) << std::endl;
+	std::cout << "Size of third: " << int( third.size() ) << std::endl << std::endl;
+
+	// insert
+
+	ft::vector<int>	myVector2( 3, 100 );
+
+	it = myVector2.begin();
+	it = myVector2.insert( it, 200 );
+
+	myVector2.insert( it, 2, 300 );
+	it = myVector2.begin();
+
+	ft::vector<int>	anotherVector( 2, 400 );
+	myVector2.insert( it + 2, anotherVector.begin(), anotherVector.end() );
+
+	int	myInts[] = { 501, 502, 503 };
+	myVector2.insert( myVector2.begin(), myInts, myInts + 3 );
+
+	printContainer( myVector2 );
 
 }
 
 int		vector_main() {
 
 	iterators_vector();
+	reverse_iterators_vector();
 	push_pop_front_back_vector();
+	capacity_vector();
+	element_access_vector();
+	modifiers_vector();
 
 	return 0;
 }
