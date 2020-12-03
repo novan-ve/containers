@@ -261,7 +261,7 @@ void 	push_pop_front_back() {
 	std::cout << std::endl << std::endl;
 }
 
-void	capacity() {
+void	capacity_list() {
 
 	std::cout << "************************* Capacity **************************" << std::endl;
 
@@ -625,7 +625,7 @@ int 	list_main() {
 	reverse_iterators();
 	constructors();
 	push_pop_front_back();
-	capacity();
+	capacity_list();
 	modifiers();
 	operations();
 	non_member();
