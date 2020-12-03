@@ -82,9 +82,25 @@ namespace ft {
 
 		template < class InputIterator >
 				vector( InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type(),
-						typename _check_type<InputIterator>::check = 0 );
+						typename _check_type<InputIterator>::check = 0 ) : _array( new T[1] ), _size( 0 ), _reserved( 0 ) {
 
-		vector( const vector& x );
+			allocator_type() = alloc;
+			this->_array[0] = value_type();
+
+			while ( first != last ) {
+
+				this->push_back( *first );
+				first++;
+			}
+		}
+
+		vector( const vector& x ) : _array( new T[1] ), _size( 0 ), _reserved( 0 ) {
+
+			this->_array[0] = value_type();
+
+			for ( const_iterator it = x.begin(); it != x.end(); ++it )
+				this->push_back( *it );
+		}
 
 		~vector() {
 
@@ -292,6 +308,78 @@ namespace ft {
 			}
 		}
 
+		iterator	erase( iterator position ) {
+
+			size_t	pos = 0;
+
+			for ( iterator it = this->begin(); it != this->end(); ++it ) {
+
+				if ( it == position )
+					break;
+				pos++;
+			}
+
+			T		*tmp;
+			tmp = new T[this->_size];
+
+			for ( size_t i = 0; i < this->_size; i++ )
+				tmp[i] = this->_array[i];
+
+			this->pop_back();
+
+			size_t i = 0;
+			size_t j = 0;
+
+			while ( j < this->_size + 1 ) {
+
+				if ( i == pos )
+					j++;
+				this->_array[i] = tmp[j];
+
+				i++;
+				j++;
+			}
+			delete [] tmp;
+
+			return iterator( &this->_array[pos] );
+		}
+
+		iterator 				erase( iterator first, iterator last ) {
+
+			size_t len = 0;
+
+			for ( iterator it = first; it != last; it++ )
+				len++;
+
+			if ( last != first )
+				last--;
+
+			while ( len > 0 ) {
+
+				last = erase(last);
+				len--;
+				if ( len > 0 )
+					last--;
+			}
+
+			return last;
+		}
+
+		void	swap( vector& x ) {
+
+			T*		a = this->_array;
+			size_t	s = this->_size;
+			size_t	r = this->_reserved;
+
+			this->_array = x._array;
+			this->_size = x._size;
+			this->_reserved = x._reserved;
+
+			x._array = a;
+			x._size = s;
+			x._reserved = r;
+		}
+
 		void	clear() {
 
 			delete [] this->_array;
@@ -303,4 +391,56 @@ namespace ft {
 			this->_array[0] = value_type();
 		}
 	};
+
+	template < class T, class Alloc >
+	bool	operator==( const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs ) {
+
+		if ( lhs.size() == rhs.size() ) {
+
+			ft::ft_const_random_access_iterator<T>	it2 = rhs.begin();
+
+			for ( ft::ft_const_random_access_iterator<T> it = lhs.begin(); it != lhs.end(); ++it ) {
+
+				if ( *it != *it2 )
+					return false;
+				++it2;
+			}
+			return true;
+		}
+		return false;
+	}
+
+	template < class T, class Alloc >
+	bool	operator!=( const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs ) { return !(lhs == rhs); }
+
+	template < class T, class Alloc >
+	bool	operator< ( const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs ) {
+
+		ft::ft_const_random_access_iterator<T>	first1 = lhs.begin();
+		ft::ft_const_random_access_iterator<T>	first2 = rhs.begin();
+
+		while ( first1 != lhs.end() ) {
+
+			if ( first2 == rhs.end() || *first2 < *first1 )
+				return false;
+			else if ( *first1 < *first2 )
+				return true;
+
+			++first1;
+			++first2;
+		}
+		return ( first2 != rhs.end() );
+	}
+
+	template < class T, class Alloc >
+	bool	operator<=( const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs ) { return !( rhs < lhs ); }
+
+	template < class T, class Alloc >
+	bool	operator> ( const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs ) { return rhs < lhs; }
+
+	template < class T, class Alloc >
+	bool	operator>=( const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs ) { return !( lhs < rhs ); }
+
+	template <class T, class Alloc>
+	void	swap( vector<T,Alloc>& x, vector<T,Alloc>& y ) { x.swap( y ); }
 }

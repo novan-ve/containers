@@ -213,6 +213,39 @@ void	reverse_iterators_vector() {
 	std::cout << "myVector has " << (rev_until - rev_from) << " elements." << std::endl << std::endl;
 }
 
+void	constructors_vector() {
+
+	std::cout << "*********************** Constructors ************************" << std::endl;
+
+	ft::vector<int> first;
+	ft::vector<int> second( 4, 100 );
+	ft::vector<int> third( second.begin(), second.end() );
+	ft::vector<int> fourth( third );
+
+	int	myInts[] = { 16, 2, 77, 29 };
+	ft::vector<int> fifth( myInts, myInts + sizeof( myInts ) / sizeof( int ) );
+
+	ft::vector<int> sixth;
+	sixth = fifth;
+
+	first.push_back( 15 );
+	first.push_back( 42 );
+
+	printContainer( first, "the contents of the first are" );
+	printContainer( second, "the contents of the second are" );
+	printContainer( third, "the contents of the third are" );
+
+	third.clear();
+
+	printContainer( fourth, "the contents of the fourth are" );
+	printContainer( fifth, "the contents of the fifth are" );
+
+	fifth.clear();
+
+	printContainer( sixth, "the contents of the sixth are" );
+	std::cout << std::endl;
+}
+
 void 	push_pop_front_back_vector() {
 
 	std::cout << "******************** push_pop_front_back ********************" << std::endl;
@@ -430,7 +463,6 @@ void	modifiers_vector() {
 	std::cout << "Size of third: " << int( third.size() ) << std::endl << std::endl;
 
 	// insert
-
 	ft::vector<int>	myVector2( 3, 100 );
 
 	it = myVector2.begin();
@@ -446,17 +478,66 @@ void	modifiers_vector() {
 	myVector2.insert( myVector2.begin(), myInts, myInts + 3 );
 
 	printContainer( myVector2 );
+	std::cout << std::endl;
 
+	// erase
+	myVector.clear();
+
+	for ( int i = 1; i <= 10; i++ )
+		myVector.push_back( i );
+
+	myVector.erase( myVector.begin() + 5 );
+	printContainer( myVector );
+
+	it = myVector.erase( myVector.begin(), myVector.begin() + 3 );
+	printContainer( myVector );
+	std::cout << std::endl;
+
+	// swap
+	ft::vector<int>	foo( 3, 100 );
+	ft::vector<int>	bar( 5, 200 );
+
+	foo.swap( bar );
+
+	printContainer( foo, "foo" );
+	printContainer( bar, "bar" );
+}
+
+void	non_member_vector() {
+
+	std::cout << "************************ Non_member *************************" << std::endl;
+
+	// relational operators
+	ft::vector<int> foo (3,100);
+	ft::vector<int> bar (2,200);
+
+	if (foo==bar) std::cout << "foo and bar are equal\n";
+	if (foo!=bar) std::cout << "foo and bar are not equal\n";
+	if (foo< bar) std::cout << "foo is less than bar\n";
+	if (foo> bar) std::cout << "foo is greater than bar\n";
+	if (foo<=bar) std::cout << "foo is less than or equal to bar\n";
+	if (foo>=bar) std::cout << "foo is greater than or equal to bar\n";
+
+	std::cout << std::endl;
+
+	// swap
+	ft::swap( foo, bar );
+
+	printContainer( foo, "foo contains" );
+	printContainer( bar, "bar contains" );
 }
 
 int		vector_main() {
 
 	iterators_vector();
 	reverse_iterators_vector();
+	constructors_vector();
 	push_pop_front_back_vector();
 	capacity_vector();
 	element_access_vector();
 	modifiers_vector();
+	non_member_vector();
+
 
 	return 0;
 }
