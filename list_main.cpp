@@ -11,9 +11,7 @@
 /* ************************************************************************** */
 
 #include "List.hpp"
-#include <iostream>
 #include <cmath>
-#include <list>
 
 template< typename T >
 void	printContainer( const T & con, const char* str ) {

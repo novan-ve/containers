@@ -339,9 +339,11 @@ namespace ft {
 		template < class InputIterator >
 		void	 				insert( iterator position, InputIterator first, InputIterator last, typename _check_type<InputIterator>::check = 0 ) {
 
-			while ( first != last ) {
-				position = insert( position, *first );
-				first++;
+			last--;
+			first--;
+			while ( last != first ) {
+				position = insert( position, *last );
+				last--;
 			}
 		}
 
