@@ -6,11 +6,11 @@
 /*   By: novan-ve <marvin@codam.nl>                   +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/01 15:18:23 by novan-ve      #+#    #+#                 */
-/*   Updated: 2020/12/01 15:18:39 by novan-ve      ########   odam.nl         */
+/*   Updated: 2020/12/03 17:39:25 by novan-ve      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Vector.hpp"
+#include "../vector/Vector.hpp"
 
 template< typename T >
 void	printContainer( const T & con, const char* str = "myVector" ) {

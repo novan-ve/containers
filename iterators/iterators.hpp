@@ -6,13 +6,13 @@
 /*   By: novan-ve <novan-ve@student.codam.n>          +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/11/29 16:28:57 by novan-ve      #+#    #+#                 */
-/*   Updated: 2020/11/29 16:28:58 by novan-ve      ########   odam.nl         */
+/*   Updated: 2020/12/03 17:38:54 by novan-ve      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include "listNode.hpp"
+#include "../list/listNode.hpp"
 #include <iostream>
 #include <cstddef>		// Linux ptrdiff_t dependency
 
