@@ -527,7 +527,7 @@ void	non_member_vector() {
 	printContainer( bar, "bar contains" );
 }
 
-int		vector_main() {
+int		main() {
 
 	iterators_vector();
 	reverse_iterators_vector();
@@ -537,7 +537,6 @@ int		vector_main() {
 	element_access_vector();
 	modifiers_vector();
 	non_member_vector();
-
 
 	return 0;
 }

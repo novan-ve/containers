@@ -617,7 +617,7 @@ void	non_member() {
 	std::cout << std::endl;
 }
 
-int 	list_main() {
+int 	main() {
 
 	iterators();
 	reverse_iterators();
@@ -627,8 +627,4 @@ int 	list_main() {
 	modifiers();
 	operations();
 	non_member();
-
-	// system( "leaks a.out" );
-
-	return 0;
 }
