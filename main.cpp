@@ -10,15 +10,17 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-int		list_main();
-int 	vector_main();
-int		stack_main();
+void	list_main();
+void	vector_main();
+void	stack_main();
+void	queue_main();
 
 int		main() {
 
 	list_main();
 	vector_main();
 	stack_main();
+	queue_main();
 
 	return 0;
 }

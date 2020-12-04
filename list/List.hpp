@@ -110,8 +110,11 @@ namespace ft {
 			this->_pte->next = this->_front;
 			this->_pte->prev = this->_back;
 
-			for ( const_iterator it = x.begin(); it != x.end(); ++it )
-				this->push_back( *it );
+			if ( x._front ) {
+
+				for ( const_iterator it = x.begin(); it != x.end(); ++it )
+					this->push_back( *it );
+			}
 		}
 
 
@@ -141,8 +144,11 @@ namespace ft {
 
 				this->clear();
 
-				for ( const_iterator it = x.begin(); it != x.end(); ++it )
-					this->push_back( *it );
+				if ( x._front ) {
+
+					for ( const_iterator it = x.begin(); it != x.end(); ++it )
+						this->push_back( *it );
+				}
 			}
 
 			return *this;

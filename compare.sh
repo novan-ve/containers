@@ -68,3 +68,19 @@ then
   check "Stack"
   rm mains/stack_main2.cpp mains/my mains/real mains/my.txt mains/real.txt
 fi
+
+if [ $# -eq 0 ]||[ "$1" = "queue" ]
+then
+  # queue
+  clang++ -Wall -Werror -Wextra -pedantic -std=c++98 -fsanitize=address mains/queue_main.cpp -o mains/my
+  sed 's/ft\:\:/std\:\:/g' mains/queue_main.cpp > mains/queue_main2.cpp
+#  sed -i '13 a \#include \<queue\>' mains/queue_main2.cpp
+  sed -i '' '13a\
+#include <queue>
+' mains/queue_main2.cpp
+  clang++ -Wall -Werror -Wextra -pedantic -std=c++98 -fsanitize=address mains/queue_main2.cpp -o mains/real
+  ./mains/my > mains/my.txt
+  ./mains/real > mains/real.txt
+  check "Queue"
+  rm mains/queue_main2.cpp mains/my mains/real mains/my.txt mains/real.txt
+fi
