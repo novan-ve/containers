@@ -84,3 +84,19 @@ then
   check "Queue"
   rm mains/queue_main2.cpp mains/my mains/real mains/my.txt mains/real.txt
 fi
+
+if [ $# -eq 0 ]||[ "$1" = "map" ]
+then
+  # map
+  clang++ -Wall -Werror -Wextra -pedantic -std=c++98 -fsanitize=address mains/map_main.cpp -o mains/my
+  sed 's/ft\:\:/std\:\:/g' mains/map_main.cpp > mains/map_main2.cpp
+#  sed -i '13 a \#include \<map\>' mains/map_main2.cpp
+  sed -i '' '13a\
+#include <map>
+' mains/map_main2.cpp
+  clang++ -Wall -Werror -Wextra -pedantic -std=c++98 -fsanitize=address mains/map_main2.cpp -o mains/real
+  ./mains/my > mains/my.txt
+  ./mains/real > mains/real.txt
+  check "Map"
+  rm mains/map_main2.cpp mains/my mains/real mains/my.txt mains/real.txt
+fi

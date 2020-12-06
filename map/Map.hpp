@@ -33,6 +33,7 @@ namespace ft {
 		mapNode<Key, T>*	_pte;
 		mapNode<Key, T>*	_root;
 		mapNode<Key, T>*	_front;
+		mapNode<Key, T>*	_back;
 
 		size_t				_size;
 
@@ -77,13 +78,14 @@ namespace ft {
 
 		// constructors
 
-		explicit map( const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type() ) : _pte( 0 ), _root( 0 ), _front( 0 ), _size( 0 ) {
+		explicit map( const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type() ) :
+		_pte( 0 ), _root( 0 ), _front( 0 ), _back( 0 ), _size( 0 ) {
 
 			allocator_type() = alloc;
 			key_compare() = comp;
 
-			this->_pte = new mapNode<Key, T>( value_type() );
-			this->_pte->left = 0;
+			this->_pte = new mapNode<Key, T>();
+			this->_pte->left = this->_pte;
 			this->_pte->right = 0;
 			this->_pte->up = 0;
 		}
@@ -97,8 +99,38 @@ namespace ft {
 
 		// destructor
 
+		/*
+ * 			 15
+ * 		   /    \
+ * 		  10     20
+ * 		        /
+ * 		       18
+ */
 		~map() {
 
+			if ( this->_front ) {
+
+				iterator			it( this->_front );
+
+				this->_pte->up = 0;
+
+				mapNode<Key, T>*	tmp;
+
+				while ( it != this->end() ) {
+
+					tmp = it.getNode();
+					it++;
+					if ( it == this->end() ) {
+						break;
+					}
+					it.getNode()->left = 0;
+					if ( it->first > tmp->data.first && it.getNode()->up != NULL && tmp->up != NULL && it.getNode() != tmp->up )
+						it.getNode()->up = tmp->up;
+
+					delete tmp;
+				}
+				delete tmp;
+			}
 			delete this->_pte;
 		}
 
@@ -108,8 +140,8 @@ namespace ft {
 
 		// iterators
 
-		iterator				begin() { return iterator( this->_front ); }
-		const_iterator			begin() const { return const_iterator( this->_front ); }
+		iterator				begin() { return this->_front ? iterator( this->_front ) : iterator( this->_pte ); }
+		const_iterator			begin() const { return this->_front ? const_iterator( this->_front ) : const_iterator( this->_pte ); }
 
 		iterator				end() { return iterator( this->_pte ); }
 		const_iterator			end() const { return const_iterator( this->_pte ); }
@@ -117,8 +149,8 @@ namespace ft {
 		reverse_iterator		rbegin() { return reverse_iterator( this->_pte ); }
 		const_reverse_iterator	rbegin() const { return const_reverse_iterator( this->_pte ); }
 
-		reverse_iterator		rend() { return reverse_iterator( this->_front ); }
-		const_reverse_iterator	rend() const { return const_reverse_iterator( this->_front ); }
+		reverse_iterator		rend() { return this->_front ? reverse_iterator( this->_front ) : reverse_iterator( this->_pte ); }
+		const_reverse_iterator	rend() const { return this->_front ? const_reverse_iterator( this->_front ) : const_reverse_iterator( this->_pte ); }
 
 		// capacity
 
@@ -152,6 +184,7 @@ namespace ft {
 
 				this->_pte->up = this->_root;
 				this->_front = this->_root;
+				this->_back = this->_root;
 
 				this->_size++;
 
@@ -160,21 +193,31 @@ namespace ft {
 
 			mapNode<Key, T>*	tmp( this->_root );
 			mapNode<Key, T>*	prev( 0 );
+
 			while ( true ) {
 
 				if ( tmp == NULL ) {
 
 					tmp = new mapNode<Key, T>( val );
 					tmp->left = 0;
-					tmp->right = this->_pte;
-					tmp->up = prev;
 
-					this->_pte->up = tmp;
+					if ( tmp->data.first > this->_back->data.first ) {
+
+						tmp->right = this->_pte;
+						this->_pte->up = tmp;
+					}
+					else
+						tmp->right = 0;
+
+					tmp->up = prev;
 
 					this->_size++;
 
 					if ( this->_front->data.first > tmp->data.first )
 						this->_front = tmp;
+
+					if ( this->_back->data.first < tmp->data.first )
+						this->_back = tmp;
 
 					if ( prev->data.first < tmp->data.first )
 						prev->right = tmp;
@@ -193,10 +236,15 @@ namespace ft {
 					tmp->right = this->_pte;
 					tmp->up = prev;
 
+					this->_pte->up = tmp;
+
 					up->right = tmp;
 
 					if ( this->_front->data.first > tmp->data.first )
 						this->_front = tmp;
+
+					if ( this->_back->data.first < tmp->data.first )
+						this->_back = tmp;
 
 					if ( prev->data.first < tmp->data.first )
 						prev->right = tmp;
@@ -206,7 +254,7 @@ namespace ft {
 					this->_size++;
 					return make_pair( iterator( tmp ), true );
 				}
-				if ( tmp->data.first == val.first )
+				if ( val.first == tmp->data.first )
 					return make_pair( iterator( tmp ), false );
 				else if ( val.first < tmp->data.first ) {
 					prev = tmp;
@@ -270,11 +318,5 @@ namespace ft {
 		pair<iterator, iterator>				equal_range( const key_type& k );
 		pair<const_iterator, const_iterator>	equal_range( const key_type& k ) const;
 
-		void test() {
-
-			std::cout << "Size: " << this->_size << std::endl;
-			std::cout << "Root first: " << this->_root->data.first << std::endl;
-			std::cout << "Root second: " << this->_root->data.second << std::endl;
-		}
 	};
 }

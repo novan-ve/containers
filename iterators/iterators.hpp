@@ -225,22 +225,28 @@ namespace ft {
 				return *this;
 
 			ft_map_iterator<Key, T>	tmp( *this );
+			ft::mapNode<Key, T>*	prev( this->_node );
 
-			if ( this->_node->right == NULL || this->_node->left == NULL ) {
+			if ( ( this->_node->right == NULL && this->_node->left == NULL ) || ( this->_node->right == NULL && this->_node->left != NULL ) ) {
 
 				if ( this->_node->up == NULL ) {
 					this->_node = this->_node->right;
 					return tmp;
 				}
-				Key		tmpKey = this->_node->data.first;
 
+				if ( this->_node->left == this->_node ) {
+
+					this->_node = this->_node->up;
+					return tmp;
+				}
+
+				Key		tmpKey = this->_node->data.first;
 				while ( tmpKey > this->_node->up->data.first ) {
 
 					this->_node = this->_node->up;
 					if ( this->_node->up == NULL ) {
 
-						while ( this->_node->right != NULL )
-							this->_node = this->_node->right;
+						this->_node = prev->right;
 						return tmp;
 					}
 
@@ -251,23 +257,33 @@ namespace ft {
 			else {
 
 				this->_node = this->_node->right;
+				if ( this->_node->left == this->_node )
+					return tmp;
 				while ( this->_node->left != NULL )
 					this->_node = this->_node->left;
 			}
 			return tmp;
-
 		}
 		ft_map_iterator	operator++() {
 
 			if ( !this->_node )
 				return *this;
 
-			if ( this->_node->right == NULL || this->_node->left == NULL ) {
+			ft::mapNode<Key, T>*	prev( this->_node );
+
+			if ( ( this->_node->right == NULL && this->_node->left == NULL ) || ( this->_node->right == NULL && this->_node->left != NULL ) ) {
 
 				if ( this->_node->up == NULL ) {
 					this->_node = this->_node->right;
 					return *this;
 				}
+
+				if ( this->_node->left == this->_node ) {
+
+					this->_node = this->_node->up;
+					return *this;
+				}
+
 				Key		tmp = this->_node->data.first;
 
 				while ( tmp > this->_node->up->data.first ) {
@@ -275,8 +291,7 @@ namespace ft {
 					this->_node = this->_node->up;
 					if ( this->_node->up == NULL ) {
 
-						while ( this->_node->right != NULL )
-							this->_node = this->_node->right;
+						this->_node = prev->right;
 						return *this;
 					}
 
@@ -287,6 +302,8 @@ namespace ft {
 			}
 			else {
 				this->_node = this->_node->right;
+				if ( this->_node->left == this->_node )
+					return *this;
 				while ( this->_node->left != NULL )
 					this->_node = this->_node->left;
 			}
@@ -294,9 +311,88 @@ namespace ft {
 		}
 		ft_map_iterator	operator--( int ) {
 
+			if ( !this->_node )
+				return *this;
+
+			ft_map_iterator<Key, T>	tmp( *this );
+			ft::mapNode<Key, T>*	prev( this->_node );
+
+			if ( this->_node->right == NULL || this->_node->left == NULL ) {
+
+				if ( this->_node->up == NULL ) {
+					this->_node = this->_node->right;
+					return tmp;
+				}
+
+				if ( this->_node->left == this->_node ) {
+
+					this->_node = this->_node->up;
+					return tmp;
+				}
+
+				Key		tmpKey = this->_node->data.first;
+
+				while ( tmpKey < this->_node->up->data.first ) {
+
+					this->_node = this->_node->up;
+					if ( this->_node->up == NULL ) {
+
+						this->_node = prev->left;
+						return tmp;
+					}
+
+					tmpKey = this->_node->data.first;
+				}
+				this->_node = this->_node->up;
+			}
+			else {
+				this->_node = this->_node->left;
+				while ( this->_node->right != NULL )
+					this->_node = this->_node->right;
+			}
+			return tmp;
 		}
 		ft_map_iterator	operator--() {
 
+			if ( !this->_node )
+				return *this;
+
+			ft::mapNode<Key, T>*	prev( this->_node );
+
+			if ( this->_node->right == NULL || this->_node->left == NULL ) {
+
+				if ( this->_node->up == NULL ) {
+					this->_node = this->_node->right;
+					return *this;
+				}
+
+				if ( this->_node->left == this->_node ) {
+
+					this->_node = this->_node->up;
+					return *this;
+				}
+
+				Key		tmpKey = this->_node->data.first;
+
+				while ( tmpKey < this->_node->up->data.first ) {
+
+					this->_node = this->_node->up;
+					if ( this->_node->up == NULL ) {
+
+						this->_node = prev->left;
+						return *this;
+					}
+
+					tmpKey = this->_node->data.first;
+				}
+				this->_node = this->_node->up;
+			}
+			else {
+				this->_node = this->_node->left;
+				while ( this->_node->right != NULL )
+					this->_node = this->_node->right;
+			}
+			return *this;
 		}
 		mapNode<Key, T>*		getNode() const { return this->_node; }
 
@@ -306,7 +402,217 @@ namespace ft {
 	};
 
 	template <class Key, class T>
-	class ft_const_map_iterator {};
+	class ft_const_map_iterator {
+
+	public:
+
+		typedef		T							value_type;
+		typedef		ptrdiff_t					difference_type;
+		typedef		const ft::pair<Key, T>*		pointer;
+		typedef		const ft::pair<Key, T>*		reference;
+		typedef		bidirectional_iterator_tag	iterator_category;
+
+
+		ft_const_map_iterator() : _node( 0 ) {}
+		ft_const_map_iterator( const ft::mapNode<Key, T>* p ) : _node( p ) {}
+		ft_const_map_iterator( const ft_map_iterator<Key, T>& x ) : _node( x.getNode() ) {}
+		ft_const_map_iterator( const ft_const_map_iterator& src ) {
+			*this = src;
+		}
+		ft_const_map_iterator&	operator=( const ft_const_map_iterator& rhs ) {
+
+			if ( this != &rhs )
+				this->_node = rhs._node;
+
+			return *this;
+		}
+		virtual ~ft_const_map_iterator() {}
+
+		reference			operator*() { return this->_node->data; }
+		pointer				operator->() { return &( this->_node->data ); }
+		bool				operator!=( const ft_const_map_iterator& rhs ) const { return this->_node != rhs._node; }
+		bool 				operator==( const ft_const_map_iterator& rhs ) const { return this->_node == rhs._node; }
+		ft_const_map_iterator	operator++( int ) {
+
+			if ( !this->_node )
+				return *this;
+
+			ft_const_map_iterator<Key, T>	tmp( *this );
+			const ft::mapNode<Key, T>*	prev( this->_node );
+
+			if ( ( this->_node->right == NULL && this->_node->left == NULL ) || ( this->_node->right == NULL && this->_node->left != NULL ) ) {
+
+				if ( this->_node->up == NULL ) {
+					this->_node = this->_node->right;
+					return tmp;
+				}
+
+				if ( this->_node->left == this->_node ) {
+
+					this->_node = this->_node->up;
+					return tmp;
+				}
+
+				Key		tmpKey = this->_node->data.first;
+
+				while ( tmpKey > this->_node->up->data.first ) {
+
+					this->_node = this->_node->up;
+					if ( this->_node->up == NULL ) {
+
+						this->_node = prev->right;
+						return tmp;
+					}
+
+					tmpKey = this->_node->data.first;
+				}
+				this->_node = this->_node->up;
+			}
+			else {
+
+				this->_node = this->_node->right;
+				if ( this->_node->left == this->_node )
+					return tmp;
+				while ( this->_node->left != NULL )
+					this->_node = this->_node->left;
+			}
+			return tmp;
+		}
+		ft_const_map_iterator	operator++() {
+
+			if ( !this->_node )
+				return *this;
+
+			const ft::mapNode<Key, T>*	prev( this->_node );
+
+			if ( ( this->_node->right == NULL && this->_node->left == NULL ) || ( this->_node->right == NULL && this->_node->left != NULL ) ) {
+
+				if ( this->_node->up == NULL ) {
+					this->_node = this->_node->right;
+					return *this;
+				}
+
+				if ( this->_node->left == this->_node ) {
+
+					this->_node = this->_node->up;
+					return *this;
+				}
+
+				Key		tmp = this->_node->data.first;
+
+				while ( tmp > this->_node->up->data.first ) {
+
+					this->_node = this->_node->up;
+					if ( this->_node->up == NULL ) {
+
+						this->_node = prev->right;
+						return *this;
+					}
+
+					tmp = this->_node->data.first;
+
+				}
+				this->_node = this->_node->up;
+			}
+			else {
+				this->_node = this->_node->right;
+				if ( this->_node->left == this->_node )
+					return *this;
+				while ( this->_node->left != NULL )
+					this->_node = this->_node->left;
+			}
+			return *this;
+		}
+		ft_const_map_iterator	operator--( int ) {
+
+			if ( !this->_node )
+				return *this;
+
+			ft_const_map_iterator<Key, T>	tmp( *this );
+			const ft::mapNode<Key, T>*		prev( this->_node );
+
+			if ( this->_node->right == NULL || this->_node->left == NULL ) {
+
+				if ( this->_node->up == NULL ) {
+					this->_node = this->_node->right;
+					return tmp;
+				}
+
+				if ( this->_node->left == this->_node ) {
+
+					this->_node = this->_node->up;
+					return tmp;
+				}
+
+				Key		tmpKey = this->_node->data.first;
+
+				while ( tmpKey < this->_node->up->data.first ) {
+
+					this->_node = this->_node->up;
+					if ( this->_node->up == NULL ) {
+
+						this->_node = prev->left;
+						return tmp;
+					}
+
+					tmpKey = this->_node->data.first;
+				}
+				this->_node = this->_node->up;
+			}
+			else {
+				this->_node = this->_node->left;
+				while ( this->_node->right != NULL )
+					this->_node = this->_node->right;
+			}
+			return tmp;
+		}
+		ft_const_map_iterator	operator--() {
+
+			if ( !this->_node )
+				return *this;
+
+			const ft::mapNode<Key, T>*	prev( this->_node );
+
+			if ( this->_node->right == NULL || this->_node->left == NULL ) {
+
+				if ( this->_node->up == NULL ) {
+					this->_node = this->_node->right;
+					return *this;
+				}
+
+				if ( this->_node->left == this->_node ) {
+
+					this->_node = this->_node->up;
+					return *this;
+				}
+
+				Key		tmpKey = this->_node->data.first;
+
+				while ( tmpKey < this->_node->up->data.first ) {
+
+					this->_node = this->_node->up;
+					if ( this->_node->up == NULL ) {
+
+						this->_node = prev->left;
+						return *this;
+					}
+
+					tmpKey = this->_node->data.first;
+				}
+				this->_node = this->_node->up;
+			}
+			else {
+				this->_node = this->_node->left;
+				while ( this->_node->right != NULL )
+					this->_node = this->_node->right;
+			}
+			return *this;
+		}
+
+	private:
+
+		const ft::mapNode<Key, T>*	_node;
+	};
 
 	template < typename T >
 	class ft_random_access_iterator {

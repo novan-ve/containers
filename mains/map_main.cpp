@@ -53,28 +53,142 @@ void	pair() {
 	if ( foo >= bar ) std::cout << "foo is greater than or equal to bar" << std::endl << std::endl;
 }
 
-int 	main() {
+void	iterator_print( ft::map<int, char> &myMap ) {
 
-	//pair();
+	std::cout << "myMap:";
+	for ( ft::map<int, char>::const_iterator it = myMap.begin(); it != myMap.end(); it++ ) {
+		std::cout << ' ' << it->first << ':' << it->second << ' ';
+	}
+	std::cout << std::endl;
+
+	std::cout << "myMap:";
+	for ( ft::map<int, char>::const_iterator it = --myMap.end(); it != myMap.begin(); it-- )
+		std::cout << ' ' << it->first << ':' << it->second << ' ';
+	std::cout << std::endl;
+
+	std::cout << "myMap:";
+	for ( ft::map<int, char>::iterator it = myMap.begin(); it != myMap.end(); it++ ) {
+		std::cout << ' ' << it->first << ':' << it->second << ' ';
+	}
+	std::cout << std::endl;
+
+	std::cout << "myMap:";
+	for ( ft::map<int, char>::iterator it = --myMap.end(); it != myMap.begin(); it-- )
+		std::cout << ' ' << it->first << ':' << it->second << ' ';
+	std::cout << std::endl << std::endl;
+}
+
+void	iterators() {
+
+	std::cout << "************************* iterators *************************" << std::endl;
 
 	ft::map<int, char>	myMap;
 
-	myMap.insert( ft::pair<int, char>( 15, 'm' ) );
-	myMap.insert( ft::pair<int, char>( 10, 'o' ) );
-	myMap.insert( ft::pair<int, char>( 20, 'b' ) );
-	myMap.insert( ft::pair<int, char>( 25, 'a' ) );
-	myMap.insert( ft::pair<int, char>( 8, 'n' ) );
-	myMap.insert( ft::pair<int, char>( 12, 'h' ) );
-
-//	myMap.test();
-
-	ft::map<int, char>::iterator it = myMap.begin();
-
-	while ( it != myMap.end() ) {
-		std::cout << it->first;
-		std::cout << it->second << std::endl;
-		it++;
+	std::cout << "myMap:";
+	for ( ft::map<int, char>::const_iterator it = myMap.begin(); it != myMap.end(); it++ ) {
+		std::cout << ' ' << it->first << ':' << it->second << ' ';
 	}
+	std::cout << std::endl << std::endl;
+
+
+/* 			 15
+ * 			/  \
+*/
+
+	myMap.insert( ft::pair<int, char>( 15, 'm' ) );
+	iterator_print( myMap );
+
+/* 			 15
+ * 		   /    \
+ * 		  10
+*/
+
+	myMap.insert( ft::pair<int, char>( 10, 'o' ) );
+	iterator_print( myMap );
+
+/* 			 15
+ * 		   /    \
+ * 		  10
+ * 		 /
+ *		8
+*/
+
+	myMap.insert( ft::pair<int, char>( 8, 'g' ) );
+	iterator_print( myMap );
+
+/* 			 15
+ * 		   /    \
+ * 		  10
+ * 		    \
+ *		     12
+*/
+
+/* 			 15
+ * 		   /    \
+ * 		  10
+ * 		 /  \
+ *		8    12
+*/
+
+	myMap.insert( ft::pair<int, char>( 12, 'e' ) );
+	iterator_print( myMap );
+
+/* 			 15
+ * 		   /    \
+ * 		  10     20
+*/
+
+/* 			 15
+ * 		   /    \
+ * 		         20
+*/
+
+/* 			 15
+ * 		   /    \
+ * 		         20
+ * 	               \
+ *		            25
+*/
+
+/* 			 15
+ * 		   /    \
+ * 		         20
+ * 		       /
+ *		      18
+*/
+
+/* 			 15
+ * 		   /    \
+ * 		         20
+ * 		       /    \
+ *		      18     25
+*/
+
+/* 			 15
+ * 		   /    \
+ * 		  10     20
+ * 		 /  \      \
+ *		8    12     25
+*/
+
+
+}
+
+int 	main() {
+
+	//pair();
+	iterators();
+
+//	myMap.insert( ft::pair<int, char>( 15, 'm' ) );
+//	myMap.insert( ft::pair<int, char>( 10, 'o' ) );
+//
+//	myMap.insert( ft::pair<int, char>( 20, 'b' ) );
+//	myMap.insert( ft::pair<int, char>( 25, 'a' ) );
+//	myMap.insert( ft::pair<int, char>( 12, 'h' ) );
+//	myMap.insert( ft::pair<int, char>( 8, 'n' ) );
+//	myMap.insert( ft::pair<int, char>( 18, 'f' ) );
+
+//	system( "leaks a.out" );
 
 	return 0;
 }
