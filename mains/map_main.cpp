@@ -3,162 +3,78 @@
 /*                                                        ::::::::            */
 /*   map_main.cpp                                       :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: novan-ve <novan-ve@student.codam.n>          +#+                     */
+/*   By: novan-ve <marvin@codam.nl>                   +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2020/12/04 17:28:10 by novan-ve      #+#    #+#                 */
-/*   Updated: 2020/12/04 17:28:11 by novan-ve      ########   odam.nl         */
+/*   Created: 2020/12/05 10:45:59 by novan-ve      #+#    #+#                 */
+/*   Updated: 2020/12/05 10:46:00 by novan-ve      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <iostream>
+#include "../map/Map.hpp"
 
+void	pair() {
 
-struct	mapNode {
+	std::cout << "*************************** Pair ****************************" << std::endl;
 
-	int			data;
+	// constructors
+	ft::pair<std::string, double>	product1;
+	ft::pair<std::string, double>	product2( "pears", 2.30 );
+	ft::pair<std::string, double>	product3( product2 );
 
-	mapNode*	left;
-	mapNode*	right;
-};
+	product1 = ft::make_pair( std::string( "soap" ), 0.99 );
 
-void printBT(const std::string& prefix, const mapNode* node, bool isLeft)
-{
-	if( node != nullptr )
-	{
-		std::cout << prefix;
+	product2.first = "pants";
+	product2.second = 39.90;
 
-		std::cout << (isLeft ? "├──" : "└──" );
+	std::cout << "The price of " << product1.first << " is $" << product1.second << std::endl;
+	std::cout << "The price of " << product2.first << " is $" << product2.second << std::endl;
+	std::cout << "The price of " << product3.first << " is $" << product3.second << std::endl << std::endl;
 
-		// print the value of the node
-		std::cout << node->data << std::endl;
+	// operator=
+	ft::pair<std::string, int>		planet;
+	ft::pair<std::string, int>		homePlanet;
 
-		// enter the next tree level - left and right branch
-		printBT( prefix + (isLeft ? "│   " : "    "), node->left, true);
-		printBT( prefix + (isLeft ? "│   " : "    "), node->right, false);
-	}
+	planet = ft::make_pair( "Earth", 6371 );
+
+	homePlanet = planet;
+
+	std::cout << "Home planet: " << homePlanet.first << std::endl;
+	std::cout << "Planet size: " << homePlanet.second << std::endl << std::endl;
+
+	// relational operators
+	ft::pair<int, char>	foo( 10, 'z' );
+	ft::pair<int, char>	bar( 90, 'a' );
+
+	if ( foo == bar ) std::cout << "foo and bar are equal" << std::endl;
+	if ( foo != bar ) std::cout << "foo and bar are not equal" << std::endl;
+	if ( foo <  bar ) std::cout << "foo is less than bar" << std::endl;
+	if ( foo >  bar ) std::cout << "foo is greater than bar" << std::endl;
+	if ( foo <= bar ) std::cout << "foo is less than or equal to bar" << std::endl;
+	if ( foo >= bar ) std::cout << "foo is greater than or equal to bar" << std::endl << std::endl;
 }
 
-void printBT(const mapNode* node)
-{
-	printBT("", node, false);
-}
-
-mapNode*	insert( mapNode* root, int data ) {
-
-	if ( root == NULL ) {
-		root = new mapNode();
-		root->data = data;
-		root->left = root->right = 0;
-	}
-	else if ( data <= root->data ) {
-		root->left = insert( root->left, data );
-	}
-	else {
-		root->right = insert( root->right, data );
-	}
-	return root;
-}
-
-bool	search( mapNode* root, int data ) {
-
-	if ( root == NULL ) {
-		return false;
-	}
-	else if ( root->data == data ) {
-		return true;
-	}
-	else if ( data <= root->data ) {
-		return search( root->left, data );
-	}
-	else {
-		return search( root->right, data );
-	}
-}
-
-mapNode*	findMin( mapNode *root ) {
-
-	while ( root->left != NULL )
-		root = root->left;
-	return root;
-}
-
-mapNode*	Delete( mapNode *root, int data ) {
-
-	if ( root == NULL ) {
-		return root;
-	}
-	else if ( data < root->data ) {
-		root->left = Delete( root->left, data );
-	}
-	else if ( data > root->data ) {
-		root->right = Delete( root->right, data );
-	}
-	else // found
-	{
-		// Case 1: No child
-		if ( root->left == NULL && root->right == NULL ) {
-
-			delete root;
-			root = NULL;
-		}
-		// Case 2: One child
-		else if ( root->left == NULL ) {
-
-			mapNode*	tmp = root;
-			root = root->right;
-			delete tmp;
-		}
-		else if ( root->right == NULL ) {
-
-			mapNode*	tmp = root;
-			root = root->left;
-			delete tmp;
-		}
-		// Case 3: 2 children
-		else {
-
-			mapNode*	tmp = findMin( root->right );
-			root->data = tmp->data;
-			root->right = Delete( root->right, tmp->data );
-		}
-	}
-	return root;
-}
-
-/*
- * 			15
- * 		   / \
- * 		  10  20
- * 		 / \    \
- * 		8   12	 25
- */
 int 	main() {
 
-	mapNode*	root = NULL;
+	//pair();
 
-	root = insert( root, 15 );
-	root = insert( root, 10 );
-	root = insert( root, 20 );
-	root = insert( root, 25 );
-	root = insert( root, 8 );
-	root = insert( root, 12 );
+	ft::map<int, char>	myMap;
 
-	if ( search( root, 12 ) == true )
-		std::cout << "12: found" << std::endl;
-	else
-		std::cout << "12: not found" << std::endl;
+	myMap.insert( ft::pair<int, char>( 15, 'm' ) );
+	myMap.insert( ft::pair<int, char>( 10, 'o' ) );
+	myMap.insert( ft::pair<int, char>( 20, 'b' ) );
+	myMap.insert( ft::pair<int, char>( 25, 'a' ) );
+	myMap.insert( ft::pair<int, char>( 8, 'n' ) );
+	myMap.insert( ft::pair<int, char>( 12, 'h' ) );
 
-	if ( search( root, 13 ) == true )
-		std::cout << "13: found" << std::endl;
-	else
-		std::cout << "13: not found" << std::endl << std::endl;
+//	myMap.test();
 
-	root = Delete( root, 20 );
-	printBT( root );
-	std::cout << std::endl;
+	ft::map<int, char>::iterator it = myMap.begin();
 
-	root = Delete( root, 10 );
-	printBT( root );
+	while ( it != myMap.end() ) {
+		std::cout << it->first;
+		std::cout << it->second << std::endl;
+		it++;
+	}
 
 	return 0;
 }
