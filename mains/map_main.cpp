@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "../map/Map.hpp"
-#include <map>
 
 template< typename T >
 void	printContainer_map( const T & con, const char* str = "myMap" ) {
