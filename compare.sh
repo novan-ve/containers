@@ -26,10 +26,13 @@ then
   # list
   clang++ -Wall -Werror -Wextra -pedantic -std=c++98 -fsanitize=address mains/list_main.cpp -o mains/my
   sed 's/ft\:\:/std\:\:/g' mains/list_main.cpp > mains/list_main2.cpp
-  #sed -i '13 a \#include \<list\>' mains/list_main2.cpp
-  sed -i '' '13a\
-#include <list>
-' mains/list_main2.cpp
+  if [[ $(uname -s) = Linux ]]; then
+    sed -i '13 a \#include \<list\>' mains/list_main2.cpp
+  else
+    sed -i '' '13a\
+    #include <list>
+    ' mains/list_main2.cpp
+  fi
   clang++ -Wall -Werror -Wextra -pedantic -std=c++98 -fsanitize=address mains/list_main2.cpp -o mains/real
   ./mains/my > mains/my.txt
   ./mains/real > mains/real.txt
@@ -42,10 +45,14 @@ then
   # vector
   clang++ -Wall -Werror -Wextra -pedantic -std=c++98 -fsanitize=address mains/vector_main.cpp -o mains/my
   sed 's/ft\:\:/std\:\:/g' mains/vector_main.cpp > mains/vector_main2.cpp
-#  sed -i '13 a \#include \<vector\>' mains/vector_main2.cpp
-  sed -i '' '13a\
-#include <vector>
-' mains/vector_main2.cpp
+  if [[ $(uname -s) = Linux ]]; then
+    sed -i '13 a \#include \<vector\>' mains/vector_main2.cpp
+  else
+    sed -i '' '13a\
+    #include <vector>
+    ' mains/vector_main2.cpp
+  fi
+
   clang++ -Wall -Werror -Wextra -pedantic -std=c++98 -fsanitize=address mains/vector_main2.cpp -o mains/real
   ./mains/my > mains/my.txt
   ./mains/real > mains/real.txt
@@ -58,10 +65,13 @@ then
   # stack
   clang++ -Wall -Werror -Wextra -pedantic -std=c++98 -fsanitize=address mains/stack_main.cpp -o mains/my
   sed 's/ft\:\:/std\:\:/g' mains/stack_main.cpp > mains/stack_main2.cpp
-#  sed -i '13 a \#include \<stack\>' mains/stack_main2.cpp
-  sed -i '' '13a\
-#include <stack>
-' mains/stack_main2.cpp
+  if [[ $(uname -s) = Linux ]]; then
+    sed -i '13 a \#include \<stack\>' mains/stack_main2.cpp
+  else
+    sed -i '' '13a\
+    #include <stack>
+    ' mains/stack_main2.cpp
+  fi
   clang++ -Wall -Werror -Wextra -pedantic -std=c++98 -fsanitize=address mains/stack_main2.cpp -o mains/real
   ./mains/my > mains/my.txt
   ./mains/real > mains/real.txt
@@ -74,10 +84,13 @@ then
   # queue
   clang++ -Wall -Werror -Wextra -pedantic -std=c++98 -fsanitize=address mains/queue_main.cpp -o mains/my
   sed 's/ft\:\:/std\:\:/g' mains/queue_main.cpp > mains/queue_main2.cpp
-#  sed -i '13 a \#include \<queue\>' mains/queue_main2.cpp
-  sed -i '' '13a\
-#include <queue>
-' mains/queue_main2.cpp
+  if [[ $(uname -s) = Linux ]]; then
+    sed -i '13 a \#include \<queue\>' mains/queue_main2.cpp
+  else
+    sed -i '' '13a\
+    #include <queue>
+    ' mains/queue_main2.cpp
+  fi
   clang++ -Wall -Werror -Wextra -pedantic -std=c++98 -fsanitize=address mains/queue_main2.cpp -o mains/real
   ./mains/my > mains/my.txt
   ./mains/real > mains/real.txt
@@ -90,10 +103,13 @@ then
   # map
   clang++ -Wall -Werror -Wextra -pedantic -std=c++98 -fsanitize=address mains/map_main.cpp -o mains/my
   sed 's/ft\:\:/std\:\:/g' mains/map_main.cpp > mains/map_main2.cpp
-#  sed -i '13 a \#include \<map\>' mains/map_main2.cpp
-  sed -i '' '13a\
-#include <map>
-' mains/map_main2.cpp
+  if [[ $(uname -s) = Linux ]]; then
+    sed -i '13 a \#include \<map\>' mains/map_main2.cpp
+  else
+    sed -i '' '13a\
+    #include <map>
+    ' mains/map_main2.cpp
+  fi
   clang++ -Wall -Werror -Wextra -pedantic -std=c++98 -fsanitize=address mains/map_main2.cpp -o mains/real
   ./mains/my > mains/my.txt
   ./mains/real > mains/real.txt
