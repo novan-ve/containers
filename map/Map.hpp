@@ -60,15 +60,11 @@ namespace ft {
 
 		class value_compare : std::binary_function<value_type, value_type, bool> {
 
-			friend class map;
-
-		protected:
+		public:
 
 			Compare comp;
 
 			value_compare (Compare c) : comp(c) {}
-
-		public:
 
 			typedef bool		result_type;
 			typedef value_type	first_argument_type;
