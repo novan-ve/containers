@@ -37,12 +37,15 @@ namespace ft {
 
 		size_t				_size;
 
+		Compare				_comp;
+		Alloc				_alloc;
+
 	public:
 
 		typedef				Key													key_type;
 		typedef 			T													mapped_type;
 		typedef				ft::pair<const key_type, mapped_type>				value_type;
-		typedef				ft::less<key_type>									key_compare;
+		typedef				Compare												key_compare;
 		typedef				Alloc												allocator_type;
 		typedef typename	allocator_type::reference							reference;
 		typedef typename	allocator_type::const_reference						const_reference;
@@ -79,10 +82,7 @@ namespace ft {
 		// constructors
 
 		explicit map( const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type() ) :
-		_pte( 0 ), _root( 0 ), _front( 0 ), _back( 0 ), _size( 0 ) {
-
-			allocator_type() = alloc;
-			key_compare() = comp;
+		_pte( 0 ), _root( 0 ), _front( 0 ), _back( 0 ), _size( 0 ), _comp( comp ), _alloc( alloc ) {
 
 			this->_pte = new mapNode<Key, T>();
 			this->_pte->left = this->_pte;
@@ -93,19 +93,33 @@ namespace ft {
 		template< class InputIterator >
 			map( InputIterator first, InputIterator last,
 				 const key_compare& comp = key_compare(),
-				 const allocator_type& alloc = allocator_type() );
+				 const allocator_type& alloc = allocator_type() ) :
+				 _pte( 0 ), _root( 0 ), _front( 0 ), _back( 0 ), _size( 0 ), _comp( comp ), _alloc( alloc ) {
 
-		map( const map& x );
+			this->_pte = new mapNode<Key, T>();
+			this->_pte->left = this->_pte;
+			this->_pte->right = 0;
+			this->_pte->up = 0;
+
+			this->insert( first, last );
+		}
+
+		map( const map& x ) : _pte( 0 ), _root( 0 ), _front( 0 ), _back( 0 ), _size( 0 ), _comp( x._comp ), _alloc( x._alloc ) {
+
+			this->_pte = new mapNode<Key, T>();
+			this->_pte->left = this->_pte;
+			this->_pte->right = 0;
+			this->_pte->up = 0;
+
+			if ( x._front ) {
+
+				for ( const_iterator it = x.begin(); it != x.end(); it++ )
+					this->insert( it.getNode()->data );
+			}
+		}
 
 		// destructor
 
-		/*
- * 			 15
- * 		   /    \
- * 		  10     20
- * 		        /
- * 		       18
- */
 		~map() {
 
 			if ( this->_front ) {
@@ -124,7 +138,7 @@ namespace ft {
 						break;
 					}
 					it.getNode()->left = 0;
-					if ( it->first > tmp->data.first && it.getNode()->up != NULL && tmp->up != NULL && it.getNode() != tmp->up )
+					if ( this->_comp( tmp->data.first, it->first ) && it.getNode()->up != NULL && tmp->up != NULL && it.getNode() != tmp->up )
 						it.getNode()->up = tmp->up;
 
 					delete tmp;
@@ -136,7 +150,23 @@ namespace ft {
 
 		// operator =
 
-		map&					operator=( const map& x );
+		map&					operator=( const map& x ) {
+
+			if ( this != &x ) {
+
+				this->clear();
+
+				this->_comp = x._comp;
+				this->_alloc = x._alloc;
+
+				if ( x._front ) {
+
+					for ( const_iterator it = x.begin(); it != x.end(); it++ )
+						this->insert( it.getNode()->data );
+				}
+			}
+			return *this;
+		}
 
 		// iterators
 
@@ -160,15 +190,13 @@ namespace ft {
 
 		size_type				max_size() const {
 
-			int		size = sizeof( value_type ) <= 8 ? 24 : 40;
-
-			return size_type( -1 ) / size;
+			return ( allocator_type().max_size() / 2 );
 		}
 
 		// element access
 
 		mapped_type&			operator[]( const key_type& k ) {
-			return ( *( (this->insert( make_pair( k, mapped_type() ) ) ).first ) ).second;
+			return ( *( (this->insert( ft::make_pair<Key, T>( k, mapped_type() ) ) ).first ) ).second;
 		}
 
 		// modifiers
@@ -188,7 +216,7 @@ namespace ft {
 
 				this->_size++;
 
-				return make_pair( iterator( this->_root ), true );
+				return ft::make_pair<iterator, bool>( iterator( this->_root ), true );
 			}
 
 			mapNode<Key, T>*	tmp( this->_root );
@@ -201,7 +229,7 @@ namespace ft {
 					tmp = new mapNode<Key, T>( val );
 					tmp->left = 0;
 
-					if ( tmp->data.first > this->_back->data.first ) {
+					if ( this->_comp( this->_back->data.first, tmp->data.first ) ) {
 
 						tmp->right = this->_pte;
 						this->_pte->up = tmp;
@@ -213,18 +241,18 @@ namespace ft {
 
 					this->_size++;
 
-					if ( this->_front->data.first > tmp->data.first )
+					if ( this->_comp( tmp->data.first, this->_front->data.first ) )
 						this->_front = tmp;
 
-					if ( this->_back->data.first < tmp->data.first )
+					if ( this->_comp( this->_back->data.first, tmp->data.first ) )
 						this->_back = tmp;
 
-					if ( prev->data.first < tmp->data.first )
+					if ( this->_comp( prev->data.first, tmp->data.first ) )
 						prev->right = tmp;
 					else
 						prev->left = tmp;
 
-					return make_pair( iterator( tmp ), true );
+					return ft::make_pair<iterator, bool>( iterator( tmp ), true );
 				}
 				if ( tmp == this->_pte ) {
 
@@ -240,23 +268,23 @@ namespace ft {
 
 					up->right = tmp;
 
-					if ( this->_front->data.first > tmp->data.first )
+					if ( this->_comp( tmp->data.first, this->_front->data.first ) )
 						this->_front = tmp;
 
-					if ( this->_back->data.first < tmp->data.first )
+					if ( this->_comp( this->_back->data.first, tmp->data.first ) )
 						this->_back = tmp;
 
-					if ( prev->data.first < tmp->data.first )
+					if ( this->_comp( prev->data.first, tmp->data.first ) )
 						prev->right = tmp;
 					else
 						prev->left = tmp;
 
 					this->_size++;
-					return make_pair( iterator( tmp ), true );
+					return ft::make_pair<iterator, bool>( iterator( tmp ), true );
 				}
 				if ( val.first == tmp->data.first )
-					return make_pair( iterator( tmp ), false );
-				else if ( val.first < tmp->data.first ) {
+					return ft::make_pair<iterator, bool>( iterator( tmp ), false );
+				else if ( this->_comp( val.first, tmp->data.first ) ) {
 					prev = tmp;
 					tmp = tmp->left;
 				}
@@ -267,56 +295,309 @@ namespace ft {
 			}
 		}
 
-		iterator				insert( iterator position, const value_type& val );
+		iterator				insert( iterator position, const value_type& val ) {
+
+			static_cast<void>( position );
+			return this->insert( val ).first;
+		}
 
 		template< class InputIterator >
-			void				insert( InputIterator first, InputIterator last );
+			void				insert( InputIterator first, InputIterator last ) {
 
-		void					erase( iterator position );
-
-		size_type				erase( const key_type& k );
-
-		void					erase( iterator first, iterator last );
-
-		void					swap( map& x );
-
-		void					clear();
-
-		// observers
-
-		key_compare				key_comp() const;
-
-		value_compare			value_comp() const;
-
-		// operations
-
-		iterator				find( const key_type& k );
-		const_iterator			find( const key_type& k ) const;
-
-		size_type				count( const key_type& k ) const {
-
-			if ( this->_root == NULL ) {
-				return false;
-			}
-			else if ( this->_root->data->first == k ) {
-				return true;
-			}
-			else if ( k <= this->_root->data->first ) {
-				return search( this->_root->left, k );
-			}
-			else {
-				return search( this->_root->right, k );
+			while ( first != last ) {
+				this->insert( *first );
+				first++;
 			}
 		}
 
-		iterator				lower_bound( const key_type& k );
-		const_iterator			lower_bound( const key_type& k ) const;
+		void					erase( iterator position ) {
 
-		iterator				upper_bound( const key_type& k );
-		const_iterator			upper_bound( const key_type& k ) const;
+			if ( position.getNode() == NULL || position.getNode() == this->_pte )
+				return;
 
-		pair<iterator, iterator>				equal_range( const key_type& k );
-		pair<const_iterator, const_iterator>	equal_range( const key_type& k ) const;
+			if ( find( position->first ) == this->end() )
+				return;
+
+			mapNode<Key, T>*	pos = position.getNode();
+
+			// No child
+			if ( pos->left == NULL && pos->right == NULL ) {
+
+				if ( this->_comp( pos->up->data.first, pos->data.first ) )
+					pos->up->right = NULL;
+				else
+					pos->up->left = NULL;
+
+				if ( pos == this->_front )
+					this->_front = (++position).getNode();
+				else if ( pos == this->_back )
+					this->_back = (--position).getNode();
+
+				delete pos;
+			}
+			// One child on the right
+			else if ( pos->left == NULL ) {
+
+				if ( pos->right == this->_pte && pos == this->_root ) {
+
+					this->_pte->up = 0;
+					this->_front = 0;
+					this->_back = 0;
+					this->_root = 0;
+				}
+				else {
+
+					if ( pos->up != NULL )
+						pos->up->right = pos->right;
+					else
+						this->_root = pos->right;
+
+					if ( pos == this->_front )
+						this->_front = (++position).getNode();
+					else if ( pos == this->_back )
+						this->_back = (--position).getNode();
+
+					pos->right->up = pos->up;
+				}
+				delete pos;
+			}
+			// one child on the left
+			else if ( pos->right == NULL ) {
+
+				if ( this->_comp( pos->up->data.first, pos->data.first ) )
+					pos->up->right = pos->left;
+				else
+					pos->up->left = pos->left;
+
+				if ( pos == this->_back )
+					this->_back = (--position).getNode();
+
+				pos->left->up = pos->up;
+				delete pos;
+			}
+			// Child on both sides
+			else {
+
+				if ( pos->right == this->_pte && pos == this->_root ) {
+
+					pos->left->up = NULL;
+					this->_back = (--position).getNode();
+					this->_back->right = this->_pte;
+					this->_pte->up = this->_back;
+					this->_root = pos->left;
+				}
+				else if ( pos->right == this->_pte ) {
+
+					pos->up->right = pos->left;
+					this->_back = (--position).getNode();
+					this->_back->right = this->_pte;
+					this->_pte->up = this->_back;
+				}
+				else {
+
+					pos->data = (++position).getNode()->data;
+					position--;
+					this->erase( iterator( pos->right ) );
+				}
+			}
+			this->_size--;
+		}
+
+		size_type				erase( const key_type& k ) {
+
+			size_type	size = this->_size;
+
+			this->erase( find( k ) );
+
+			if ( size == this->_size )
+				return 0;
+			else
+				return 1;
+		}
+
+		void					erase( iterator first, iterator last ) {
+
+			iterator tmp;
+			while ( first != last ) {
+
+				tmp = first;
+				first++;
+				erase( tmp );
+			}
+		}
+
+		void					swap( map& x ) {
+
+			if ( this == &x )
+				return;
+
+			mapNode<Key, T>	*r = this->_root;
+			mapNode<Key, T>	*f = this->_front;
+			mapNode<Key, T>	*b = this->_back;
+			mapNode<Key, T>	*p = this->_pte;
+			size_type		s = this->_size;
+
+			this->_root = x._root;
+			this->_front = x._front;
+			this->_back = x._back;
+			this->_pte = x._pte;
+			this->_size = x._size;
+
+			x._root = r;
+			x._front = f;
+			x._back = b;
+			x._pte = p;
+			x._size = s;
+		}
+
+		void					clear() {
+
+			if ( !this->_front )
+				return;
+
+			iterator			it( this->_front );
+
+			this->_pte->up = 0;
+
+			mapNode<Key, T>*	tmp;
+
+			while ( it != this->end() ) {
+
+				tmp = it.getNode();
+				it++;
+				if ( it == this->end() ) {
+					break;
+				}
+				it.getNode()->left = 0;
+				if ( this->_comp( tmp->data.first, it->first ) && it.getNode()->up != NULL && tmp->up != NULL && it.getNode() != tmp->up )
+					it.getNode()->up = tmp->up;
+
+				delete tmp;
+			}
+			delete tmp;
+
+			this->_root = NULL;
+			this->_front = NULL;
+			this->_back = NULL;
+			this->_size = 0;
+		}
+
+		// observers
+
+		key_compare				key_comp() const { return key_compare(); }
+
+		value_compare			value_comp() const { return value_compare( key_compare() ); }
+
+		// operations
+
+		iterator				find( const key_type& k ) {
+
+			iterator	it( this->_root );
+
+			while ( it != this->end() && it.getNode() ) {
+
+				if ( this->_comp( k, it->first ) )
+					it = it.getNode()->left;
+				else if ( this->_comp( it->first, k ) )
+					it = it.getNode()->right;
+				else
+					return iterator( it );
+			}
+			return this->end();
+		}
+		const_iterator			find( const key_type& k ) const {
+
+			const_iterator	it( this->_root );
+
+			while ( it != this->end() && it.getNode() ) {
+
+				if ( this->_comp( k, it->first ) )
+					it = it.getNode()->left;
+				else if ( this->_comp( it->first, k ) )
+					it = it.getNode()->right;
+				else
+					return const_iterator( it );
+			}
+			return this->end();
+		}
+
+		size_type				count( const key_type& k ) const {
+
+			if ( this->find( k ) == this->end() )
+				return 0;
+			return 1;
+		}
+
+		iterator				lower_bound( const key_type& k ) {
+
+			iterator	it = this->_root;
+
+			while ( it != this->end() && it.getNode() ) {
+
+				if ( this->_comp( k, it->first ) )
+					it = it.getNode()->left;
+				else if ( this->_comp( it->first, k ) )
+					it = it.getNode()->right;
+				else
+					return iterator( it );
+			}
+			return this->end();
+		}
+		const_iterator			lower_bound( const key_type& k ) const {
+
+			iterator	it = this->_root;
+
+			while ( it != this->end() && it.getNode() ) {
+
+				if ( this->_comp( k, it->first ) )
+					it = it.getNode()->left;
+				else if ( this->_comp( it->first, k ) )
+					it = it.getNode()->right;
+				else
+					return const_iterator( it );
+			}
+			return this->end();
+		}
+
+		iterator				upper_bound( const key_type& k ) {
+
+			iterator	it = this->_root;
+
+			while ( it != this->end() && it.getNode() ) {
+
+				if ( this->_comp( k, it->first ) )
+					it = it.getNode()->left;
+				else if ( this->_comp( it->first, k ) )
+					it = it.getNode()->right;
+				else
+					return iterator( ++it );
+			}
+			return this->end();
+		}
+		const_iterator			upper_bound( const key_type& k ) const {
+
+			iterator	it = this->_root;
+
+			while ( it != this->end() && it.getNode() ) {
+
+				if ( this->_comp( k, it->first ) )
+					it = it.getNode()->left;
+				else if ( this->_comp( it->first, k ) )
+					it = it.getNode()->right;
+				else
+					return const_iterator( ++it );
+			}
+			return this->end();
+		}
+
+		pair<iterator, iterator>				equal_range( const key_type& k ) {
+
+			return ft::make_pair<iterator, iterator>( this->find( k ), ++this->find( k ) );
+		}
+		pair<const_iterator, const_iterator>	equal_range( const key_type& k ) const {
+
+			return ft::make_pair<const_iterator, const_iterator>( this->find( k ), ++this->find( k ) );
+		}
 
 	};
 }

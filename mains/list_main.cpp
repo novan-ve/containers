@@ -289,8 +289,17 @@ void	capacity_list() {
 
 	// max_size
 
-	std::cout << "myInts: " << myInts.max_size() << std::endl;
-	std::cout << "myList: " << myList.max_size() << std::endl << std::endl;
+	ft::list<int>	numbers;
+
+	if ( numbers.max_size() > 1000 ) {
+
+		for ( int i = 0; i < 1000; i++ )
+			numbers.push_back( 0 );
+		std::cout << "The list contains 1000 elements." << std::endl;
+	}
+	else
+		std::cout << "The list could not hold 1000 elements." << std::endl;
+	std::cout << std::endl;
 }
 
 void	modifiers() {

@@ -314,8 +314,17 @@ void	capacity_vector() {
 
 	// max_size
 
-	std::cout << "myInts: " << myInts.max_size() << std::endl;
-	std::cout << "myVector: " << myVector.max_size() << std::endl;
+	ft::vector<int>	numbers;
+
+	if ( numbers.max_size() > 1000 ) {
+
+		for ( int i = 0; i < 1000; i++ )
+			numbers.push_back( 0 );
+		std::cout << "The vector contains 1000 elements." << std::endl;
+	}
+	else
+		std::cout << "The vector could not hold 1000 elements." << std::endl;
+	std::cout << std::endl;
 
 	// capacity
 	ft::vector<int>	myVector2;
@@ -325,7 +334,6 @@ void	capacity_vector() {
 
 	std::cout << "size: " << myVector2.size() << std::endl;
 	std::cout << "capacity: " << myVector2.capacity() << std::endl;
-	std::cout << "max_size: " << myVector2.max_size() << std::endl;
 
 	// resize
 	ft::vector<int>	myVector3;

@@ -194,10 +194,10 @@ namespace ft {
 
 	public:
 
-		typedef		T							value_type;
+		typedef		ft::pair<Key, T>			value_type;
 		typedef		ptrdiff_t					difference_type;
-		typedef		T*							pointer;
-		typedef		T&							reference;
+		typedef		ft::pair<Key, T>*			pointer;
+		typedef		ft::pair<Key, T>&			reference;
 		typedef		bidirectional_iterator_tag	iterator_category;
 
 
@@ -406,7 +406,7 @@ namespace ft {
 
 	public:
 
-		typedef		T							value_type;
+		typedef		ft::pair<Key, T>			value_type;
 		typedef		ptrdiff_t					difference_type;
 		typedef		const ft::pair<Key, T>*		pointer;
 		typedef		const ft::pair<Key, T>*		reference;
@@ -608,6 +608,8 @@ namespace ft {
 			}
 			return *this;
 		}
+
+		const ft::mapNode<Key, T>*	getNode() const { return this->_node; }
 
 	private:
 

@@ -21,11 +21,13 @@ namespace ft {
 
 	private:
 
-		listNode<T>*	_front;
-		listNode<T>*	_back;
-		listNode<T>*	_pte;
+		listNode<T>*		_front;
+		listNode<T>*		_back;
+		listNode<T>*		_pte;
 
-		size_t 			_size;
+		size_t 				_size;
+
+		Alloc				_alloc;
 
 
 		template < typename U >
@@ -64,9 +66,7 @@ namespace ft {
 
 
 		// Constructors
-		explicit	list( const allocator_type& alloc = allocator_type() ) : _front( NULL ), _back( NULL ), _pte( 0 ), _size( 0 ) {
-
-			allocator_type() = alloc;
+		explicit	list( const allocator_type& alloc = allocator_type() ) : _front( NULL ), _back( NULL ), _pte( 0 ), _size( 0 ), _alloc( alloc ) {
 
 			this->_pte = new listNode<T>( value_type() );
 			this->_pte->next = this->_front;
@@ -74,9 +74,7 @@ namespace ft {
 		}
 
 		explicit	list( size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type() ) :
-		_front( NULL ), _back( NULL ), _pte( 0 ), _size( 0 ) {
-
-			allocator_type() = alloc;
+		_front( NULL ), _back( NULL ), _pte( 0 ), _size( 0 ), _alloc( alloc ) {
 
 			this->_pte = new listNode<T>( value_type() );
 			this->_pte->next = this->_front;
@@ -89,9 +87,7 @@ namespace ft {
 		template < class InputIterator >
 		list ( InputIterator first, InputIterator last,
 			const allocator_type& alloc = allocator_type(),
-			typename _check_type<InputIterator>::check = 0 ) : _front( NULL ), _back( NULL ), _pte( 0 ), _size( 0 ) {
-
-			allocator_type() = alloc;
+			typename _check_type<InputIterator>::check = 0 ) : _front( NULL ), _back( NULL ), _pte( 0 ), _size( 0 ), _alloc( alloc ) {
 
 			this->_pte = new listNode<T>( value_type() );
 			this->_pte->next = this->_front;
@@ -109,6 +105,8 @@ namespace ft {
 			this->_pte = new listNode<T>( value_type() );
 			this->_pte->next = this->_front;
 			this->_pte->prev = this->_back;
+
+			this->_alloc = x._alloc;
 
 			if ( x._front ) {
 
@@ -144,6 +142,8 @@ namespace ft {
 
 				this->clear();
 
+				this->_alloc = x._alloc;
+
 				if ( x._front ) {
 
 					for ( const_iterator it = x.begin(); it != x.end(); ++it )
@@ -174,9 +174,7 @@ namespace ft {
 		size_type				size() const { return this->_size; }
 		size_type				max_size() const {
 
-			int		size = sizeof( value_type ) <= 8 ? 24 : 40;
-
-			return size_type( -1 ) / size;
+			return allocator_type().max_size() / 2;
 		}
 
 

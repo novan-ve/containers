@@ -26,6 +26,8 @@ namespace ft {
 		size_t	_size;
 		size_t	_reserved;
 
+		Alloc	_alloc;
+
 		template < typename U >
 		struct	_check_type {};
 
@@ -62,16 +64,15 @@ namespace ft {
 
 
 		// Constructors
-		explicit vector( const allocator_type& alloc = allocator_type() ) : _array( new T[1] ), _size( 0 ), _reserved( 0 ) {
+		explicit vector( const allocator_type& alloc = allocator_type() ) :
+		_array( new T[1] ), _size( 0 ), _reserved( 0 ), _alloc( alloc ) {
 
-			allocator_type() = alloc;
 			this->_array[0] = value_type();
 		}
 
 		explicit vector( size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type() ) :
-		_array( new T[1] ), _size( 0 ), _reserved( 0 ) {
+		_array( new T[1] ), _size( 0 ), _reserved( 0 ), _alloc( alloc ) {
 
-			allocator_type() = alloc;
 			this->_array[0] = value_type();
 
 			this->reserve( n );
@@ -82,9 +83,9 @@ namespace ft {
 
 		template < class InputIterator >
 				vector( InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type(),
-						typename _check_type<InputIterator>::check = 0 ) : _array( new T[1] ), _size( 0 ), _reserved( 0 ) {
+						typename _check_type<InputIterator>::check = 0 ) :
+						_array( new T[1] ), _size( 0 ), _reserved( 0 ), _alloc( alloc ) {
 
-			allocator_type() = alloc;
 			this->_array[0] = value_type();
 
 			while ( first != last ) {
@@ -98,8 +99,14 @@ namespace ft {
 
 			this->_array[0] = value_type();
 
-			for ( const_iterator it = x.begin(); it != x.end(); ++it )
-				this->push_back( *it );
+			this->_alloc = x._alloc;
+
+			if ( x._size ) {
+
+				for ( const_iterator it = x.begin(); it != x.end(); ++it )
+					this->push_back( *it );
+			}
+
 		}
 
 		~vector() {
@@ -113,8 +120,13 @@ namespace ft {
 
 				this->clear();
 
-				for ( const_iterator it = x.begin(); it != x.end(); ++it )
-					this->push_back( *it );
+				this->_alloc = x._alloc;
+
+				if ( x._size ) {
+
+					for ( const_iterator it = x.begin(); it != x.end(); ++it )
+						this->push_back( *it );
+				}
 			}
 
 			return *this;
@@ -138,7 +150,7 @@ namespace ft {
 		size_type				size() const { return this->_size; }
 		size_type				max_size() const {
 
-			return size_type( -1 ) / sizeof( value_type );
+			return allocator_type().max_size() / 2;
 		}
 
 		void	resize( size_type n, value_type val = value_type() ) {
